@@ -1,8 +1,6 @@
 ## 平台简介
 
 * 本仓库为前端技术栈 [Vue3](https://v3.cn.vuejs.org) + [Element Plus](https://element-plus.org/zh-CN) + [Vite](https://cn.vitejs.dev) 版本。
-* 配套后端代码仓库地址[RuoYi-Vue-Plus 4.X(注意版本号)](https://gitee.com/JavaLionLi/RuoYi-Vue-Plus)
-* 5.X后端需要使用此项目 [plus-ui](https://gitee.com/JavaLionLi/plus-ui)
 
 ## 后端项目地址
 #### gitee地址
