@@ -1,7 +1,7 @@
 {
-  "name": "ruoyi-vue-plus",
+  "name": "ruoyi-fast",
   "version": "4.8.2",
-  "description": "RuoYi-Vue-Plus后台管理系统",
+  "description": "ruoyi-fast后台管理系统",
   "author": "LionLi",
   "license": "MIT",
   "scripts": {

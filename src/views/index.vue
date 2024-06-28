@@ -2,9 +2,9 @@
   <div class="app-container home">
     <el-row :gutter="20">
       <el-col :sm="24" :lg="12" style="padding-left: 20px">
-        <h2>RuoYi-Vue-Plus后台管理系统</h2>
+        <h2>ruoyi-fast后台管理系统</h2>
         <p>
-          RuoYi-Vue-Plus 是基于 RuoYi-Vue 针对 分布式集群 场景升级(不兼容原框架)
+          ruoyi-fast 是基于 RuoYi-Vue 针对 分布式集群 场景升级(不兼容原框架)
           <br/>
           * 前端开发框架 Vue、Element UI<br/>
           * 后端开发框架 Spring Boot<br/>
@@ -103,7 +103,7 @@
 </template>
 
 <script setup name="Index">
-const version = ref('4.8.2')
+const version = ref('5.2.0')
 
 function goTarget(url) {
   window.open(url, '__blank')

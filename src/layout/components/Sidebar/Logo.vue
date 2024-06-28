@@ -25,7 +25,7 @@ defineProps({
   }
 })
 
-const title = ref('RuoYi-Vue-Plus');
+const title = ref('ruoyi-fast');
 const settingsStore = useSettingsStore();
 const sideTheme = computed(() => settingsStore.sideTheme);
 </script>
