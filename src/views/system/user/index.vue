@@ -135,7 +135,7 @@
                <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
                <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
                <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-               <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+               <el-table-column label="部门" align="center" key="deptName" prop="deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
                <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
                <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
                   <template #default="scope">
@@ -259,7 +259,7 @@
                            :key="item.postId"
                            :label="item.postName"
                            :value="item.postId"
-                           :disabled="item.status == 1"
+                           :disabled="item.status == 0"
                         ></el-option>
                      </el-select>
                   </el-form-item>
@@ -272,7 +272,7 @@
                            :key="item.roleId"
                            :label="item.roleName"
                            :value="item.roleId"
-                           :disabled="item.status == 1"
+                           :disabled="item.status == 0"
                         ></el-option>
                      </el-select>
                   </el-form-item>
@@ -460,7 +460,7 @@ function handleExport() {
 };
 /** 用户状态修改  */
 function handleStatusChange(row) {
-  let text = row.status === "0" ? "启用" : "停用";
+  let text = row.status === "1" ? "启用" : "停用";
   proxy.$modal.confirm('确认要"' + text + '""' + row.userName + '"用户吗?').then(function () {
     return changeUserStatus(row.userId, row.status);
   }).then(() => {
