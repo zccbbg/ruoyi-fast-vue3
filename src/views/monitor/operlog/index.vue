@@ -177,8 +177,8 @@
                </el-col>
                <el-col :span="6">
                   <el-form-item label="操作状态：">
-                     <div v-if="form.status === 0">正常</div>
-                     <div v-else-if="form.status === 1">失败</div>
+                     <div v-if="form.status === 1">正常</div>
+                     <div v-else-if="form.status === 0">失败</div>
                   </el-form-item>
                </el-col>
                <el-col :span="8">
@@ -188,7 +188,7 @@
                   <el-form-item label="操作时间：">{{ parseTime(form.operTime) }}</el-form-item>
                </el-col>
                <el-col :span="24">
-                  <el-form-item label="异常信息：" v-if="form.status === 1">{{ form.errorMsg }}</el-form-item>
+                  <el-form-item label="异常信息：" v-if="form.status === 0">{{ form.errorMsg }}</el-form-item>
                </el-col>
             </el-row>
          </el-form>

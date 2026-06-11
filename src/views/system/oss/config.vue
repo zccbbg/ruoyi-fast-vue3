@@ -351,9 +351,9 @@ function submitForm() {
     }
   });
 }
-/** 用户状态修改  */
+/** 默认配置状态修改  */
 function handleStatusChange(row) {
-  let text = row.status === "1" ? "启用" : "停用";
+  let text = row.status === "1" ? "设为默认" : "取消默认";
   proxy.$modal.confirm('确认要"' + text + '""' + row.configKey + '"配置吗?').then(() => {
     return changeOssConfigStatus(row.ossConfigId, row.status, row.configKey);
   }).then(() => {
