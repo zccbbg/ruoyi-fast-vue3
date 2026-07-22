@@ -178,7 +178,7 @@ const data = reactive({
   form: {},
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 30,
     noticeTitle: undefined,
     createBy: undefined,
     status: undefined

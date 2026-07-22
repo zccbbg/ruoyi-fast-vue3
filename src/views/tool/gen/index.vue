@@ -180,7 +180,7 @@ const uniqueId = ref("");
 const data = reactive({
   queryParams: {
     pageNum: 1,
-    pageSize: 50,
+    pageSize: 30,
     tableName: undefined,
     tableComment: undefined,
     dataName: "master"

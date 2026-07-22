@@ -66,7 +66,7 @@ const onlineList = ref([]);
 const loading = ref(true);
 const total = ref(0);
 const pageNum = ref(1);
-const pageSize = ref(10);
+const pageSize = ref(30);
 
 const queryParams = ref({
   ipaddr: undefined,

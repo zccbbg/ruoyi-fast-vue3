@@ -108,7 +108,7 @@ const userIds = ref([]);
 
 const queryParams = reactive({
   pageNum: 1,
-  pageSize: 10,
+  pageSize: 30,
   roleId: route.params.roleId,
   userName: undefined,
   phonenumber: undefined,
