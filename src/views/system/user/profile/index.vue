@@ -10,7 +10,7 @@
                </template>
                <div>
                   <div class="text-center">
-                     <userAvatar />
+                     <img :src="userStore.avatar" alt="用户头像" class="img-circle img-lg" />
                   </div>
                   <ul class="list-group list-group-striped">
                      <li class="list-group-item">
@@ -63,11 +63,12 @@
 </template>
 
 <script setup name="Profile">
-import userAvatar from "./userAvatar";
+import useUserStore from "@/store/modules/user";
 import userInfo from "./userInfo";
 import resetPwd from "./resetPwd";
 import { getUserProfile } from "@/api/system/user";
 
+const userStore = useUserStore();
 const activeTab = ref("userinfo");
 const state = reactive({
   user: {},

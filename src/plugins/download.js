@@ -9,29 +9,6 @@ const baseURL = import.meta.env.VITE_APP_BASE_API
 let downloadLoadingInstance;
 
 export default {
-  oss(ossId) {
-    var url = baseURL + '/system/oss/download/' + ossId
-    downloadLoadingInstance = ElLoading.service({ text: "正在下载数据，请稍候", background: "rgba(0, 0, 0, 0.7)", })
-    axios({
-      method: 'get',
-      url: url,
-      responseType: 'blob',
-      headers: { 'Authorization': 'Bearer ' + getToken() }
-    }).then((res) => {
-      const isBlob = blobValidate(res.data);
-      if (isBlob) {
-        const blob = new Blob([res.data], { type: 'application/octet-stream' })
-        this.saveAs(blob, decodeURIComponent(res.headers['download-filename']))
-      } else {
-        this.printErrMsg(res.data);
-      }
-      downloadLoadingInstance.close();
-    }).catch((r) => {
-      console.error(r)
-      Message.error('下载文件出现错误，请联系管理员！')
-      downloadLoadingInstance.close();
-    })
-  },
   zip(url, name) {
     var url = baseURL + url
     downloadLoadingInstance = ElLoading.service({ text: "正在下载数据，请稍候", spinner: "el-icon-loading", background: "rgba(0, 0, 0, 0.7)", })
