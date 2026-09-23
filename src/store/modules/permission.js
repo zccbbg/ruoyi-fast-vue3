@@ -24,14 +24,16 @@ const usePermissionStore = defineStore(
       setSidebarRouters(routes) {
         this.sidebarRouters = routes
       },
-      generateRoutes() {
-        return new Promise(resolve => {
-          this.setRoutes([])
-          this.setSidebarRouters(constantRoutes)
-          this.setDefaultRoutes(constantRoutes)
-          this.setTopbarRoutes(constantRoutes)
-          resolve([])
-        })
+      /**
+       * 初始化硬编码路由。
+       *
+       * @return 无返回值
+       */
+      initializeRoutes() {
+        this.setRoutes([])
+        this.setSidebarRouters(constantRoutes)
+        this.setDefaultRoutes(constantRoutes)
+        this.setTopbarRoutes(constantRoutes)
       }
     }
   })

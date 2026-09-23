@@ -68,7 +68,7 @@ const state = reactive({
 
 function getUser() {
   getUserProfile().then(response => {
-    state.user = response.data.user;
+    state.user = response.data;
   });
 };
 
