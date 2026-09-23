@@ -7,23 +7,15 @@
       <template v-if="appStore.device !== 'mobile'">
         <screenfull id="screenfull" class="right-menu-item hover-effect" />
       </template>
-      <div class="avatar-container">
-        <el-dropdown @command="handleCommand" class="right-menu-item hover-effect" trigger="click">
-          <div class="avatar-wrapper">
-            <img :src="userStore.avatar" class="user-avatar" />
-            <el-icon><caret-bottom /></el-icon>
-          </div>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <router-link to="/user/profile">
-                <el-dropdown-item>个人中心</el-dropdown-item>
-              </router-link>
-              <el-dropdown-item divided command="logout">
-                <span>退出登录</span>
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
+      <div class="user-actions">
+        <span class="right-menu-item user-name">
+          <el-icon><User /></el-icon>
+          {{ userStore.name }}
+        </span>
+        <span class="right-menu-item hover-effect logout-action" @click="logout">
+          <el-icon><SwitchButton /></el-icon>
+          退出
+        </span>
       </div>
     </div>
   </div>
@@ -42,16 +34,6 @@ const userStore = useUserStore()
 
 function toggleSideBar() {
   appStore.toggleSideBar()
-}
-
-/**
- * 仅处理退出登录菜单命令。
- *
- * @param {string} command 下拉菜单命令
- * @return {void} 无返回值
- */
-function handleCommand(command) {
-  if (command === 'logout') logout()
 }
 
 function logout() {
@@ -125,27 +107,18 @@ function logout() {
       }
     }
 
-    .avatar-container {
+    /* 用户名称与退出操作采用横向常驻布局。 */
+    .user-actions {
       margin-right: 40px;
-
-      .avatar-wrapper {
-        margin-top: 5px;
-        position: relative;
-
-        .user-avatar {
-          cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
-        }
-
-        i {
-          cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
-        }
+      /* 用户名以紧凑图文形式展示。 */
+      .user-name {
+        font-size: 14px;
+        /* 图标与用户名保持垂直居中。 */
+        vertical-align: middle;
+      }
+      /* 退出操作使用与用户名一致的紧凑字号。 */
+      .logout-action {
+        font-size: 14px;
       }
     }
   }

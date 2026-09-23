@@ -1,6 +1,5 @@
 import { login, logout, getInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import defAva from '@/assets/images/profile.jpg'
 
 const useUserStore = defineStore(
   'user',
@@ -9,7 +8,6 @@ const useUserStore = defineStore(
       token: getToken(),
       id: '',
       name: '',
-      avatar: '',
       roles: [],
       permissions: []
     }),
@@ -35,13 +33,10 @@ const useUserStore = defineStore(
         return new Promise((resolve, reject) => {
           getInfo().then(res => {
             const user = res.data.user
-            const avatar = (user.avatar == "" || user.avatar == null) ? defAva : user.avatar;
-
             this.roles = ['user']
             this.permissions = ['*:*:*']
             this.id = user.userId
             this.name = user.userName
-            this.avatar = avatar
             resolve(res)
           }).catch(error => {
             reject(error)
