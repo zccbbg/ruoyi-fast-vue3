@@ -7,15 +7,12 @@
     position: relative;
   }
 
-  .sidebarHide {
-    margin-left: 0!important;
-  }
-
   .sidebar-container {
     -webkit-transition: width .28s;
     transition: width 0.28s;
     width: $base-sidebar-width !important;
-    background-color: $base-menu-background;
+    // 侧边栏固定使用浅色主题。
+    background-color: $base-menu-light-background;
     height: 100%;
     position: fixed;
     font-size: 0px;
@@ -86,25 +83,12 @@
       }
     }
 
-    & .theme-dark .is-active > .el-sub-menu__title {
-      color: $base-menu-color-active !important;
-    }
-
     & .nest-menu .el-sub-menu>.el-sub-menu__title,
     & .el-sub-menu .el-menu-item {
       min-width: $base-sidebar-width !important;
 
       &:hover {
         background-color: rgba(0, 0, 0, 0.06) !important;
-      }
-    }
-
-    & .theme-dark .nest-menu .el-sub-menu>.el-sub-menu__title,
-    & .theme-dark .el-sub-menu .el-menu-item {
-      background-color: $base-sub-menu-background !important;
-
-      &:hover {
-        background-color: $base-sub-menu-hover !important;
       }
     }
   }

@@ -3,6 +3,7 @@ import { createApp } from 'vue'
 import Cookies from 'js-cookie'
 
 import ElementPlus from 'element-plus'
+import 'element-plus/theme-chalk/index.css'
 import locale from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
 
 import '@/assets/styles/index.scss' // global css
@@ -38,6 +39,8 @@ import ImagePreview from "@/components/ImagePreview"
 import TreeSelect from '@/components/TreeSelect'
 // 字典标签组件
 import DictTag from '@/components/DictTag'
+
+document.title = import.meta.env.VITE_APP_TITLE
 
 const app = createApp(App)
 

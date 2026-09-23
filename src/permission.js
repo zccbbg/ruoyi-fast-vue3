@@ -5,7 +5,6 @@ import 'nprogress/nprogress.css'
 import { getToken } from '@/utils/auth'
 import { isRelogin } from '@/utils/request'
 import useUserStore from '@/store/modules/user'
-import useSettingsStore from '@/store/modules/settings'
 import usePermissionStore from '@/store/modules/permission'
 
 NProgress.configure({ showSpinner: false });
@@ -15,7 +14,6 @@ const whiteList = ['/login', '/register'];
 router.beforeEach((to, from, next) => {
   NProgress.start()
   if (getToken()) {
-    to.meta.title && useSettingsStore().setTitle(to.meta.title)
     /* has token*/
     if (to.path === '/login') {
       next({ path: '/' })

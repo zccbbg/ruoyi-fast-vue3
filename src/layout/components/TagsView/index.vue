@@ -45,7 +45,6 @@
 import ScrollPane from './ScrollPane'
 import { getNormalPath } from '@/utils/ruoyi'
 import useTagsViewStore from '@/store/modules/tagsView'
-import useSettingsStore from '@/store/modules/settings'
 import usePermissionStore from '@/store/modules/permission'
 
 const visible = ref(false);
@@ -61,7 +60,6 @@ const router = useRouter();
 
 const visitedViews = computed(() => useTagsViewStore().visitedViews);
 const routes = computed(() => usePermissionStore().routes);
-const theme = computed(() => useSettingsStore().theme);
 
 watch(route, () => {
   addTags()
@@ -85,8 +83,8 @@ function isActive(r) {
 function activeStyle(tag) {
   if (!isActive(tag)) return {};
   return {
-    "background-color": theme.value,
-    "border-color": theme.value
+    "background-color": "var(--el-color-primary)",
+    "border-color": "var(--el-color-primary)"
   };
 }
 function isAffix(tag) {

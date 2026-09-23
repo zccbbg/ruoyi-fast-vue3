@@ -1,8 +1,7 @@
 <template>
   <div class="navbar">
     <hamburger id="hamburger-container" :is-active="appStore.sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
-    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!settingsStore.topNav" />
-    <top-nav id="topmenu-container" class="topmenu-container" v-if="settingsStore.topNav" />
+    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
 
     <div class="right-menu">
       <template v-if="appStore.device !== 'mobile'">
@@ -19,9 +18,6 @@
               <router-link to="/user/profile">
                 <el-dropdown-item>个人中心</el-dropdown-item>
               </router-link>
-              <el-dropdown-item command="setLayout" v-if="settingsStore.showSettings">
-                <span>布局设置</span>
-              </el-dropdown-item>
               <el-dropdown-item divided command="logout">
                 <span>退出登录</span>
               </el-dropdown-item>
@@ -36,32 +32,26 @@
 <script setup>
 import { ElMessageBox } from 'element-plus'
 import Breadcrumb from '@/components/Breadcrumb'
-import TopNav from '@/components/TopNav'
 import Hamburger from '@/components/Hamburger'
 import Screenfull from '@/components/Screenfull'
 import useAppStore from '@/store/modules/app'
 import useUserStore from '@/store/modules/user'
-import useSettingsStore from '@/store/modules/settings'
 
 const appStore = useAppStore()
 const userStore = useUserStore()
-const settingsStore = useSettingsStore()
 
 function toggleSideBar() {
   appStore.toggleSideBar()
 }
 
+/**
+ * 仅处理退出登录菜单命令。
+ *
+ * @param {string} command 下拉菜单命令
+ * @return {void} 无返回值
+ */
 function handleCommand(command) {
-  switch (command) {
-    case "setLayout":
-      setLayout();
-      break;
-    case "logout":
-      logout();
-      break;
-    default:
-      break;
-  }
+  if (command === 'logout') logout()
 }
 
 function logout() {
@@ -74,11 +64,6 @@ function logout() {
       location.href = import.meta.env.VITE_APP_CONTEXT_PATH + 'index';
     })
   }).catch(() => { });
-}
-
-const emits = defineEmits(['setLayout'])
-function setLayout() {
-  emits('setLayout');
 }
 </script>
 
@@ -105,11 +90,6 @@ function setLayout() {
 
   .breadcrumb-container {
     float: left;
-  }
-
-  .topmenu-container {
-    position: absolute;
-    left: 50px;
   }
 
   .errLog-container {
