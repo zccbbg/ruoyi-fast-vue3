@@ -99,28 +99,3 @@ export function updateUserPwd(oldPassword, newPassword) {
     params: data
   })
 }
-
-// 查询授权角色
-export function getAuthRole(userId) {
-  return request({
-    url: '/system/user/authRole/' + userId,
-    method: 'get'
-  })
-}
-
-// 保存授权角色
-export function updateAuthRole(data) {
-  return request({
-    url: '/system/user/authRole',
-    method: 'put',
-    params: data
-  })
-}
-
-// 查询部门下拉树结构
-export function deptTreeSelect() {
-  return request({
-    url: '/system/user/deptTree',
-    method: 'get'
-  })
-}

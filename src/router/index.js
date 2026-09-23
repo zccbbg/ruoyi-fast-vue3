@@ -83,50 +83,92 @@ export const constantRoutes = [
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
-  }
-]
-
-// 动态路由，基于用户权限动态去加载
-export const dynamicRoutes = [
-  {
-    path: '/system/user-auth',
-    component: Layout,
-    hidden: true,
-    permissions: ['system:user:edit'],
-    children: [
-      {
-        path: 'role/:userId(\\d+)',
-        component: () => import('@/views/system/user/authRole'),
-        name: 'AuthRole',
-        meta: { title: '分配角色', activeMenu: '/system/user' }
-      }
-    ]
   },
   {
-    path: '/system/role-auth',
+    path: '/system',
     component: Layout,
-    hidden: true,
-    permissions: ['system:role:edit'],
+    redirect: '/system/user',
+    name: 'System',
+    meta: { title: '系统管理', icon: 'system', alwaysShow: true },
     children: [
       {
-        path: 'user/:roleId(\\d+)',
-        component: () => import('@/views/system/role/authUser'),
-        name: 'AuthUser',
-        meta: { title: '分配用户', activeMenu: '/system/role' }
-      }
-    ]
-  },
-  {
-    path: '/system/dict-data',
-    component: Layout,
-    hidden: true,
-    permissions: ['system:dict:list'],
-    children: [
+        path: 'user',
+        component: () => import('@/views/system/user/index'),
+        name: 'User',
+        meta: { title: '用户管理', icon: 'user' }
+      },
       {
-        path: 'index/:dictId(\\d+)',
+        path: 'dict',
+        component: () => import('@/views/system/dict/index'),
+        name: 'Dict',
+        meta: { title: '字典管理', icon: 'dict' }
+      },
+      {
+        path: 'config',
+        component: () => import('@/views/system/config/index'),
+        name: 'Config',
+        meta: { title: '参数设置', icon: 'edit' }
+      },
+      {
+        path: 'notice',
+        component: () => import('@/views/system/notice/index'),
+        name: 'Notice',
+        meta: { title: '通知公告', icon: 'message' }
+      },
+      {
+        path: 'dict-data/index/:dictId(\\d+)',
         component: () => import('@/views/system/dict/data'),
         name: 'Data',
+        hidden: true,
         meta: { title: '字典数据', activeMenu: '/system/dict' }
+      }
+    ]
+  },
+  {
+    path: '/monitor',
+    component: Layout,
+    redirect: '/monitor/online',
+    name: 'Monitor',
+    meta: { title: '系统监控', icon: 'monitor', alwaysShow: true },
+    children: [
+      {
+        path: 'online',
+        component: () => import('@/views/monitor/online/index'),
+        name: 'Online',
+        meta: { title: '在线用户', icon: 'online' }
+      },
+      {
+        path: 'cache/list',
+        component: () => import('@/views/monitor/cache/list'),
+        name: 'CacheList',
+        meta: { title: '缓存列表', icon: 'redis-list' }
+      },
+      {
+        path: 'cache',
+        component: () => import('@/views/monitor/cache/index'),
+        name: 'Cache',
+        meta: { title: '缓存监控', icon: 'redis' }
+      }
+    ]
+  },
+  {
+    path: '/log',
+    component: Layout,
+    redirect: '/log/operlog',
+    name: 'Log',
+    meta: { title: '日志管理', icon: 'log', alwaysShow: true },
+    children: [
+      {
+        path: 'operlog',
+        component: () => import('@/views/monitor/operlog/index'),
+        name: 'Operlog',
+        meta: { title: '操作日志', icon: 'form' }
+      },
+      {
+        path: 'logininfor',
+        component: () => import('@/views/monitor/logininfor/index'),
+        name: 'Logininfor',
+        meta: { title: '登录日志', icon: 'logininfor' }
       }
     ]
   }

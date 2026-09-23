@@ -26,14 +26,6 @@
                         <div class="pull-right">{{ state.user.email }}</div>
                      </li>
                      <li class="list-group-item">
-                        <svg-icon icon-class="tree" />所属部门
-                        <div class="pull-right" v-if="state.user.dept">{{ state.user.dept.deptName }} / {{ state.postGroup }}</div>
-                     </li>
-                     <li class="list-group-item">
-                        <svg-icon icon-class="peoples" />所属角色
-                        <div class="pull-right">{{ state.roleGroup }}</div>
-                     </li>
-                     <li class="list-group-item">
                         <svg-icon icon-class="date" />创建日期
                         <div class="pull-right">{{ state.user.createTime }}</div>
                      </li>
@@ -71,16 +63,12 @@ import { getUserProfile } from "@/api/system/user";
 const userStore = useUserStore();
 const activeTab = ref("userinfo");
 const state = reactive({
-  user: {},
-  roleGroup: {},
-  postGroup: {}
+  user: {}
 });
 
 function getUser() {
   getUserProfile().then(response => {
     state.user = response.data.user;
-    state.roleGroup = response.data.roleGroup;
-    state.postGroup = response.data.postGroup;
   });
 };
 
