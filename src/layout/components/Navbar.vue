@@ -4,9 +4,6 @@
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
 
     <div class="right-menu">
-      <template v-if="appStore.device !== 'mobile'">
-        <screenfull id="screenfull" class="right-menu-item hover-effect" />
-      </template>
       <div class="user-actions">
         <span class="right-menu-item user-name">
           <el-icon><User /></el-icon>
@@ -25,7 +22,6 @@
 import { ElMessageBox } from 'element-plus'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-import Screenfull from '@/components/Screenfull'
 import useAppStore from '@/store/modules/app'
 import useUserStore from '@/store/modules/user'
 
@@ -107,17 +103,19 @@ function logout() {
       }
     }
 
-    /* 用户名称与退出操作采用横向常驻布局。 */
+    /* 用户操作区使用弹性布局，保证图标、用户名和退出操作垂直居中。 */
     .user-actions {
-      margin-right: 40px;
-      /* 用户名以紧凑图文形式展示。 */
-      .user-name {
-        font-size: 14px;
-        /* 图标与用户名保持垂直居中。 */
-        vertical-align: middle;
-      }
-      /* 退出操作使用与用户名一致的紧凑字号。 */
+      display: flex;
+      align-items: center;
+      height: 100%;
+      margin-right: 24px;
+
+      /* 用户名与退出操作采用紧凑图文排列。 */
+      .user-name,
       .logout-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
         font-size: 14px;
       }
     }
