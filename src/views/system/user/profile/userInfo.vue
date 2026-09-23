@@ -32,6 +32,7 @@ const props = defineProps({
 });
 
 const { proxy } = getCurrentInstance();
+const router = useRouter();
 
 const rules = ref({
   nickName: [{ required: true, message: "用户昵称不能为空", trigger: "blur" }],
@@ -51,6 +52,6 @@ function submit() {
 };
 /** 关闭按钮 */
 function close() {
-  proxy.$tab.closePage();
+  router.push('/index');
 };
 </script>

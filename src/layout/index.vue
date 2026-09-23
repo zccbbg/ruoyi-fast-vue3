@@ -2,10 +2,9 @@
   <div :class="classObj" class="app-wrapper">
     <div v-if="device === 'mobile' && sidebar.opened" class="drawer-bg" @click="handleClickOutside"/>
     <sidebar class="sidebar-container" />
-    <div class="main-container hasTagsView">
+    <div class="main-container">
       <div class="fixed-header">
         <navbar />
-        <tags-view />
       </div>
       <app-main />
     </div>
@@ -15,7 +14,7 @@
 <script setup>
 import { useWindowSize } from '@vueuse/core'
 import Sidebar from './components/Sidebar/index.vue'
-import { AppMain, Navbar, TagsView } from './components'
+import { AppMain, Navbar } from './components'
 
 import useAppStore from '@/store/modules/app'
 const sidebar = computed(() => useAppStore().sidebar);

@@ -20,6 +20,7 @@
 import { updateUserPwd } from "@/api/system/user";
 
 const { proxy } = getCurrentInstance();
+const router = useRouter();
 
 const user = reactive({
   oldPassword: undefined,
@@ -52,6 +53,6 @@ function submit() {
 };
 /** 关闭按钮 */
 function close() {
-  proxy.$tab.closePage();
+  router.push('/index');
 };
 </script>

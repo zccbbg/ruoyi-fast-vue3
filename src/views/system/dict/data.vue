@@ -181,6 +181,7 @@ import { optionselect as getDictOptionselect, getType } from "@/api/system/dict/
 import { listData, getData, delData, addData, updateData } from "@/api/system/dict/data";
 
 const { proxy } = getCurrentInstance();
+const router = useRouter();
 const { sys_normal_disable } = proxy.useDict("sys_normal_disable");
 
 const dataList = ref([]);
@@ -273,8 +274,7 @@ function handleQuery() {
 }
 /** 返回按钮操作 */
 function handleClose() {
-  const obj = { path: "/system/dict" };
-  proxy.$tab.closeOpenPage(obj);
+  router.push('/system/dict');
 }
 /** 重置按钮操作 */
 function resetQuery() {
