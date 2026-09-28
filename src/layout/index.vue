@@ -61,18 +61,21 @@ function logout() {
   position: relative;
 }
 
-/* 主区域始终占满可用宽度，不再为左侧导航预留空间。 */
+/* 主区域占满可用宽度，并清除旧侧栏布局可能留下的左边距。 */
 .main-container {
   min-height: 100%;
   width: 100%;
+  margin-left: 0;
 }
 
-/* 顶部导航固定在页面上方。 */
+/* 顶部导航固定并铺满整页，覆盖旧侧栏布局的宽度计算。 */
 .fixed-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  width: 100%;
+  margin-left: 0;
   z-index: 10;
 }
 
