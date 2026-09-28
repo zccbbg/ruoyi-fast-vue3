@@ -54,7 +54,7 @@ export const constantRoutes = [
   {
     path: '',
     component: Layout,
-    redirect: '/index',
+    redirect: '/health',
     children: [
       {
         path: '/index',
@@ -101,6 +101,27 @@ export const constantRoutes = [
         name: 'Data',
         hidden: true,
         meta: { title: '字典数据', activeMenu: '/system/dict' }
+      }
+    ]
+  },
+  {
+    path: '/health',
+    component: Layout,
+    redirect: '/health/workspace',
+    name: 'Health',
+    meta: { title: '健康资料', icon: 'chart', alwaysShow: true },
+    children: [
+      {
+        path: 'workspace',
+        component: () => import('@/views/health/index.vue'),
+        name: 'HealthWorkspace',
+        meta: { title: '健康工作区', icon: 'message' }
+      },
+      {
+        path: 'models',
+        component: () => import('@/views/health/models.vue'),
+        name: 'HealthModels',
+        meta: { title: '模型配置', icon: 'edit' }
       }
     ]
   },

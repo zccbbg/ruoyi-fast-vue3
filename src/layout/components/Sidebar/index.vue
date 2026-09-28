@@ -1,9 +1,9 @@
 <template>
   <div class="drawer-panel">
     <div class="drawer-heading">
-      <router-link class="drawer-brand" to="/index" @click="closeDrawer">
+      <router-link class="drawer-brand" to="/health/workspace" @click="closeDrawer">
         <img src="@/assets/logo/logo.png" alt="" width="28" height="28" />
-        <span>ruoyi-fast</span>
+        <span>健康资料</span>
       </router-link>
       <button class="drawer-close" type="button" aria-label="关闭导航菜单" @click="closeDrawer">
         <el-icon><Close /></el-icon>

@@ -4,9 +4,9 @@
       <el-icon><Expand /></el-icon>
     </button>
 
-    <router-link class="brand" to="/index" aria-label="返回首页">
+    <router-link class="brand" to="/health/workspace" aria-label="返回健康资料">
       <img src="@/assets/logo/logo.png" alt="" width="30" height="30" />
-      <span>ruoyi-fast</span>
+      <span>健康资料</span>
     </router-link>
 
     <nav v-if="!isMobile" class="desktop-nav" aria-label="主导航">
