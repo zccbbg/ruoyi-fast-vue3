@@ -1,10 +1,10 @@
 <template>
-  <div :class="classObj" class="app-wrapper">
-    <div v-if="device === 'mobile' && sidebar.opened" class="drawer-bg" @click="handleClickOutside"/>
-    <sidebar class="sidebar-container" />
+  <div class="app-wrapper" :class="{ mobile: isMobile, 'drawer-open': isMobile && sidebar.opened }">
+    <div v-if="isMobile && sidebar.opened" class="drawer-bg" @click="closeDrawer" />
+    <sidebar class="sidebar-container" @logout="logout" />
     <div class="main-container">
       <div class="fixed-header">
-        <navbar />
+        <navbar @logout="logout" />
       </div>
       <app-main />
     </div>
@@ -13,80 +13,74 @@
 
 <script setup>
 import { useWindowSize } from '@vueuse/core'
+import { ElMessageBox } from 'element-plus'
 import Sidebar from './components/Sidebar/index.vue'
 import { AppMain, Navbar } from './components'
-
 import useAppStore from '@/store/modules/app'
-const sidebar = computed(() => useAppStore().sidebar);
-const device = computed(() => useAppStore().device);
+import useUserStore from '@/store/modules/user'
 
-const classObj = computed(() => ({
-  hideSidebar: !sidebar.value.opened,
-  openSidebar: sidebar.value.opened,
-  withoutAnimation: sidebar.value.withoutAnimation,
-  mobile: device.value === 'mobile'
-}))
+const appStore = useAppStore()
+const userStore = useUserStore()
+const sidebar = computed(() => appStore.sidebar)
+const isMobile = computed(() => appStore.device === 'mobile')
+const { width } = useWindowSize()
 
-const { width } = useWindowSize();
-const WIDTH = 992; // refer to Bootstrap's responsive design
-
+// 用途：根据屏幕宽度切换桌面导航和手机抽屉；参数：无；返回值：无。
 watchEffect(() => {
-  if (device.value === 'mobile' && sidebar.value.opened) {
-    useAppStore().closeSideBar({ withoutAnimation: false })
-  }
-  if (width.value - 1 < WIDTH) {
-    useAppStore().toggleDevice('mobile')
-    useAppStore().closeSideBar({ withoutAnimation: true })
-  } else {
-    useAppStore().toggleDevice('desktop')
+  const device = width.value < 992 ? 'mobile' : 'desktop'
+  if (appStore.device !== device) {
+    appStore.toggleDevice(device)
+    appStore.closeSideBar({ withoutAnimation: true })
   }
 })
 
-function handleClickOutside() {
-  useAppStore().closeSideBar({ withoutAnimation: false })
+// 用途：点击遮罩时收起手机导航；参数：无；返回值：无。
+function closeDrawer() {
+  appStore.closeSideBar({ withoutAnimation: false })
+}
+
+// 用途：确认后退出当前账号；参数：无；返回值：无。
+function logout() {
+  ElMessageBox.confirm('确定注销并退出系统吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    userStore.logOut().then(() => {
+      location.href = import.meta.env.VITE_APP_CONTEXT_PATH + 'index'
+    })
+  }).catch(() => {})
 }
 </script>
 
 <style lang="scss" scoped>
-  @import "@/assets/styles/mixin.scss";
-  @import "@/assets/styles/variables.module.scss";
-
+/* 页面外壳占满视口并为固定顶部导航提供定位基准。 */
 .app-wrapper {
-  @include clearfix;
+  min-height: 100%;
+  width: 100%;
   position: relative;
-  height: 100%;
-  width: 100%;
-
-  &.mobile.openSidebar {
-    position: fixed;
-    top: 0;
-  }
 }
 
-.drawer-bg {
-  background: #000;
-  opacity: 0.3;
+/* 主区域始终占满可用宽度，不再为左侧导航预留空间。 */
+.main-container {
+  min-height: 100%;
   width: 100%;
-  top: 0;
-  height: 100%;
-  position: absolute;
-  z-index: 999;
 }
 
+/* 顶部导航固定在页面上方。 */
 .fixed-header {
   position: fixed;
   top: 0;
+  left: 0;
   right: 0;
-  z-index: 9;
-  width: calc(100% - #{$base-sidebar-width});
-  transition: width 0.28s;
+  z-index: 10;
 }
 
-.hideSidebar .fixed-header {
-  width: calc(100% - 54px);
-}
-
-.mobile .fixed-header {
-  width: 100%;
+/* 手机抽屉展开时的遮罩覆盖正文和顶部导航。 */
+.drawer-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.42);
 }
 </style>

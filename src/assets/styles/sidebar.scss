@@ -1,220 +1,169 @@
-#app {
+/* 手机导航抽屉默认隐藏，仅在窄屏下显示。 */
+#app .sidebar-container {
+  display: none;
+}
 
-  .main-container {
-    height: 100%;
-    transition: margin-left .28s;
-    margin-left: $base-sidebar-width;
-    position: relative;
-  }
-
-  .sidebar-container {
-    -webkit-transition: width .28s;
-    transition: width 0.28s;
-    width: $base-sidebar-width !important;
-    // 侧边栏固定使用浅色主题。
-    background-color: $base-menu-light-background;
-    height: 100%;
+/* 手机上抽屉固定覆盖页面左侧。 */
+@media (max-width: 991px) {
+  /* 抽屉宽度随手机屏幕收缩，并保留可点击的遮罩。 */
+  #app .sidebar-container {
+    display: flex;
+    flex-direction: column;
     position: fixed;
-    font-size: 0px;
     top: 0;
     bottom: 0;
     left: 0;
     z-index: 1001;
-    overflow: hidden;
-
-    // reset element-ui css
-    .horizontal-collapse-transition {
-      transition: 0s width ease-in-out, 0s padding-left ease-in-out, 0s padding-right ease-in-out;
-    }
-
-    .scrollbar-wrapper {
-      overflow-x: hidden !important;
-    }
-
-    .el-scrollbar__bar.is-vertical {
-      right: 0px;
-    }
-
-    .el-scrollbar {
-      height: 100%;
-    }
-
-    &.has-logo {
-      .el-scrollbar {
-        height: calc(100% - 50px);
-      }
-    }
-
-    .is-horizontal {
-      display: none;
-    }
-
-    a {
-      display: inline-block;
-      width: 100%;
-      overflow: hidden;
-    }
-
-    .svg-icon {
-      margin-right: 16px;
-    }
-
-    .el-menu {
-      border: none;
-      height: 100%;
-      width: 100% !important;
-    }
-
-    .el-menu-item, .menu-title {
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
-      white-space: nowrap !important;
-    }
-
-    .el-menu-item .el-menu-tooltip__trigger {
-      display: inline-block !important;
-    }
-
-    // menu hover
-    .sub-menu-title-noDropdown,
-    .el-sub-menu__title {
-      &:hover {
-        background-color: rgba(0, 0, 0, 0.06) !important;
-      }
-    }
-
-    & .nest-menu .el-sub-menu>.el-sub-menu__title,
-    & .el-sub-menu .el-menu-item {
-      min-width: $base-sidebar-width !important;
-
-      &:hover {
-        background-color: rgba(0, 0, 0, 0.06) !important;
-      }
-    }
+    width: min(360px, calc(100vw - 56px));
+    background: #fff;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateX(-100%);
+    transition: transform 0.24s ease-out, visibility 0s 0.24s;
+    box-shadow: 12px 0 32px rgba(0, 0, 0, 0.08);
   }
 
-  .hideSidebar {
-    .sidebar-container {
-      width: 54px !important;
-    }
-
-    .main-container {
-      margin-left: 54px;
-    }
-
-    .sub-menu-title-noDropdown {
-      padding: 0 !important;
-      position: relative;
-
-      .el-tooltip {
-        padding: 0 !important;
-
-        .svg-icon {
-          margin-left: 20px;
-        }
-      }
-    }
-
-    .el-sub-menu {
-      overflow: hidden;
-
-      &>.el-sub-menu__title {
-        padding: 0 !important;
-
-        .svg-icon {
-          margin-left: 20px;
-        }
-
-      }
-    }
-
-    .el-menu--collapse {
-      .el-sub-menu {
-        &>.el-sub-menu__title {
-          &>span {
-            height: 0;
-            width: 0;
-            overflow: hidden;
-            visibility: hidden;
-            display: inline-block;
-          }
-          &>i {
-            height: 0;
-            width: 0;
-            overflow: hidden;
-            visibility: hidden;
-            display: inline-block;
-          }
-        }
-      }
-    }
+  /* 抽屉打开后从左侧滑入。 */
+  #app .drawer-open .sidebar-container {
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(0);
+    transition: transform 0.24s ease-out;
   }
 
-  .el-menu--collapse .el-menu .el-sub-menu {
-    min-width: $base-sidebar-width !important;
+  /* 抽屉内部纵向分为品牌栏和可滚动菜单。 */
+  #app .drawer-panel {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
   }
 
-  // mobile responsive
-  .mobile {
-    .main-container {
-      margin-left: 0px;
-    }
-
-    .sidebar-container {
-      transition: transform .28s;
-      width: $base-sidebar-width !important;
-    }
-
-    &.hideSidebar {
-      .sidebar-container {
-        pointer-events: none;
-        transition-duration: 0.3s;
-        transform: translate3d(-$base-sidebar-width, 0, 0);
-      }
-    }
+  /* 抽屉标题行对应参考图中的品牌和关闭按钮。 */
+  #app .drawer-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: none;
+    height: 68px;
+    padding: 0 18px;
+    border-bottom: 1px solid #e5e5e5;
   }
 
-  .withoutAnimation {
+  /* 抽屉品牌与顶栏保持一致。 */
+  #app .drawer-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #121820;
+    font-size: 18px;
+    font-weight: 700;
+  }
 
-    .main-container,
-    .sidebar-container {
-      transition: none;
-    }
+  /* 关闭按钮提供手机端易点击的尺寸。 */
+  #app .drawer-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #5f6368;
+    font-size: 19px;
+    cursor: pointer;
+  }
+
+  /* 菜单和账户区域在小屏幕中统一滚动。 */
+  #app .drawer-scroll {
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* 垂直菜单与抽屉背景保持一致。 */
+  #app .drawer-menu {
+    padding: 16px 12px;
+    border-right: 0;
+    background: #fff;
+  }
+
+  /* 一级菜单提供参考图中的行高和圆角。 */
+  #app .drawer-menu .el-menu-item,
+  #app .drawer-menu .el-sub-menu__title {
+    height: 48px;
+    margin: 2px 0;
+    border-radius: 10px;
+    color: #5d6268;
+    font-size: 15px;
+  }
+
+  /* 菜单图标与文字间距保持一致。 */
+  #app .drawer-menu .svg-icon {
+    margin-right: 12px;
+    font-size: 18px;
+  }
+
+  /* 当前菜单和悬停菜单显示浅橙色强调。 */
+  #app .drawer-menu .el-menu-item.is-active,
+  #app .drawer-menu .el-menu-item:hover,
+  #app .drawer-menu .el-sub-menu__title:hover {
+    background: #fff1e8;
+    color: #f26b21;
+  }
+
+  /* 账户区通过分隔线与页面导航区区分。 */
+  #app .drawer-account {
+    margin: 0 18px 20px;
+    padding-top: 18px;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  /* 账户区标题采用紧凑的辅助文字。 */
+  #app .drawer-section-title {
+    margin: 0 0 8px;
+    color: #343a40;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  /* 当前用户名与操作项对齐。 */
+  #app .drawer-user {
+    margin: 0 0 10px;
+    color: #777d84;
+    font-size: 14px;
+  }
+
+  /* 退出入口使用完整行宽作为触控区域。 */
+  #app .drawer-logout {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 48px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 8px;
+    background: #f7f7f7;
+    color: #4c535b;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  /* 键盘用户可以识别抽屉内当前聚焦的按钮。 */
+  #app .drawer-close:focus-visible,
+  #app .drawer-logout:focus-visible {
+    outline: 2px solid #f26b21;
+    outline-offset: 2px;
   }
 }
 
-// when menu collapsed
-.el-menu--vertical {
-  &>.el-menu {
-    .svg-icon {
-      margin-right: 16px;
-    }
-  }
-
-  .nest-menu .el-sub-menu>.el-sub-menu__title,
-  .el-menu-item {
-    &:hover {
-      // you can use $sub-menuHover
-      background-color: rgba(0, 0, 0, 0.06) !important;
-    }
-  }
-
-  // the scroll bar appears when the sub-menu is too long
-  >.el-menu--popup {
-    max-height: 100vh;
-    overflow-y: auto;
-
-    &::-webkit-scrollbar-track-piece {
-      background: #d3dce6;
-    }
-
-    &::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: #99a9bf;
-      border-radius: 20px;
-    }
+/* 减少动态效果偏好下取消抽屉滑动。 */
+@media (prefers-reduced-motion: reduce) {
+  /* 抽屉直接切换显示状态。 */
+  #app .sidebar-container {
+    transition: none;
   }
 }

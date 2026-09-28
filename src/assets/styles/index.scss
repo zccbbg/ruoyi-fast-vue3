@@ -182,3 +182,43 @@ aside {
     margin-bottom: 10px;
   }
 }
+
+/* 手机端通用页面使用一致的紧凑留白。 */
+@media (max-width: 767px) {
+  /* 列表和表单页面避免内容紧贴屏幕边缘。 */
+  .app-container {
+    padding: 16px;
+  }
+
+  /* 弹窗宽度限制在手机视口内。 */
+  .el-dialog:not(.is-fullscreen) {
+    width: calc(100vw - 24px) !important;
+    max-width: 600px;
+    margin-top: 5vh !important;
+  }
+
+  /* 弹窗内容过长时在弹窗内部滚动。 */
+  .el-dialog:not(.is-fullscreen) .el-dialog__body {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  /* 弹窗中的双列表单在手机端改为单列。 */
+  .el-dialog .el-row > .el-col {
+    max-width: 100%;
+    flex: 0 0 100%;
+  }
+
+  /* 查询表单控件可随手机宽度缩小。 */
+  .app-container .el-form--inline .el-form-item,
+  .app-container .el-form--inline .el-form-item__content {
+    max-width: 100%;
+  }
+
+  /* 日期范围和输入框不超出表单区域。 */
+  .app-container .el-form--inline .el-input,
+  .app-container .el-form--inline .el-select,
+  .app-container .el-form--inline .el-date-editor {
+    max-width: 100%;
+  }
+}

@@ -1,46 +1,20 @@
 <template>
-  <section class="app-main">
+  <main class="app-main" id="main-content">
     <router-view v-slot="{ Component, route }">
       <transition name="fade-transform" mode="out-in">
         <component :is="Component" :key="route.path" />
       </transition>
     </router-view>
-  </section>
+  </main>
 </template>
 
 <style lang="scss" scoped>
+/* 正文为固定顶栏预留高度，并使用工作台的浅灰底色。 */
 .app-main {
-  /* 50= navbar  50  */
-  min-height: calc(100vh - 50px);
+  min-height: 100vh;
   width: 100%;
-  position: relative;
+  padding-top: 68px;
+  background: #f3f3f3;
   overflow: hidden;
-}
-
-.fixed-header + .app-main {
-  padding-top: 50px;
-}
-</style>
-
-<style lang="scss">
-// fix css style bug in open el-dialog
-.el-popup-parent--hidden {
-  .fixed-header {
-    padding-right: 6px;
-  }
-}
-
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background-color: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: #c0c0c0;
-  border-radius: 3px;
 }
 </style>
