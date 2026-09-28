@@ -5,7 +5,7 @@
     </button>
 
     <router-link class="brand" to="/index" aria-label="返回首页">
-      <img src="@/assets/logo/login-brand.png" alt="" width="30" height="30" />
+      <img src="@/assets/logo/logo.png" alt="" width="30" height="30" />
       <span>ruoyi-fast</span>
     </router-link>
 
