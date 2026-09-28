@@ -10,7 +10,7 @@
     </router-link>
 
     <nav v-if="!isMobile" class="desktop-nav" aria-label="主导航">
-      <el-menu :default-active="activeMenu" mode="horizontal" class="top-menu">
+      <el-menu :default-active="activeMenu" mode="horizontal" :ellipsis="false" class="top-menu">
         <sidebar-item v-for="(item, index) in menuRoutes" :key="item.path + index" :item="item" :base-path="item.path" />
       </el-menu>
     </nav>
