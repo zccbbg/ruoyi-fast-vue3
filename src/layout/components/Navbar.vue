@@ -5,7 +5,7 @@
     </button>
 
     <router-link class="brand" to="/index" aria-label="返回首页">
-      <img src="@/assets/logo/logo.png" alt="" width="30" height="30" />
+      <img src="@/assets/logo/login-brand.png" alt="" width="30" height="30" />
       <span>ruoyi-fast</span>
     </router-link>
 
@@ -15,18 +15,16 @@
       </el-menu>
     </nav>
 
-    <el-dropdown class="account-menu" trigger="click" @command="$emit('logout')">
-      <button class="account-trigger" type="button" aria-label="账户菜单">
+    <div class="account-menu">
+      <span class="account-user">
         <el-icon><User /></el-icon>
         <span class="account-name">{{ userStore.name }}</span>
-        <el-icon><ArrowDown /></el-icon>
+      </span>
+      <button class="logout-button" type="button" @click="$emit('logout')">
+        <el-icon><SwitchButton /></el-icon>
+        <span>退出</span>
       </button>
-      <template #dropdown>
-        <el-dropdown-menu>
-          <el-dropdown-item command="logout">退出登录</el-dropdown-item>
-        </el-dropdown-menu>
-      </template>
-    </el-dropdown>
+    </div>
   </header>
 </template>
 
@@ -53,22 +51,25 @@ function toggleDrawer() {
 </script>
 
 <style lang="scss" scoped>
-/* 顶栏采用参考图的浅色背景与水平排列。 */
+/* 桌面顶栏划分左侧品牌、居中导航和右侧账户三个区域。 */
 .navbar {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content minmax(0, 1fr);
   align-items: center;
-  gap: 28px;
+  gap: 20px;
+  width: 100%;
   height: 68px;
-  padding: 0 32px;
+  padding: 0 clamp(24px, 2.4vw, 48px);
   background: #fff;
   border-bottom: 1px solid #e5e5e5;
 }
 
-/* 品牌入口保持图文紧凑排列。 */
+/* 品牌入口固定在左侧起点并保持图文紧凑。 */
 .brand {
   display: inline-flex;
   align-items: center;
-  flex: none;
+  grid-column: 1;
+  justify-self: start;
   gap: 10px;
   color: #121820;
   font-size: 19px;
@@ -76,10 +77,11 @@ function toggleDrawer() {
   white-space: nowrap;
 }
 
-/* 路由菜单占据品牌和账户之间的空间。 */
+/* 路由菜单使用独立的中间列。 */
 .desktop-nav {
-  flex: 1;
-  min-width: 0;
+  grid-column: 2;
+  justify-self: center;
+  width: max-content;
   overflow: visible;
 }
 
@@ -119,14 +121,26 @@ function toggleDrawer() {
   color: #f26b21;
 }
 
-/* 账户操作始终靠右。 */
+/* 用户名和退出按钮直接并列且贴齐右侧。 */
 .account-menu {
-  flex: none;
-  margin-left: auto;
+  display: flex;
+  align-items: center;
+  grid-column: 3;
+  justify-self: end;
+  gap: 18px;
 }
 
-/* 账户按钮提供完整的触控区域和清晰的焦点状态。 */
-.account-trigger,
+/* 用户名作为常显信息展示。 */
+.account-user {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #4c535b;
+  white-space: nowrap;
+}
+
+/* 退出和菜单按钮提供完整的触控区域。 */
+.logout-button,
 .menu-toggle {
   display: inline-flex;
   align-items: center;
@@ -142,8 +156,8 @@ function toggleDrawer() {
   cursor: pointer;
 }
 
-/* 键盘操作时突出显示当前控件。 */
-.account-trigger:focus-visible,
+/* 键盘操作时突出显示当前按钮。 */
+.logout-button:focus-visible,
 .menu-toggle:focus-visible {
   outline: 2px solid #f26b21;
   outline-offset: 2px;
@@ -154,10 +168,11 @@ function toggleDrawer() {
   display: none;
 }
 
-/* 窄屏导航采用菜单按钮、品牌和用户入口三段式布局。 */
+/* 窄屏导航采用菜单按钮、品牌和账户操作的紧凑排列。 */
 @media (max-width: 991px) {
   /* 手机上收紧顶栏间距。 */
   .navbar {
+    display: flex;
     gap: 8px;
     padding: 0 16px;
   }
@@ -176,7 +191,13 @@ function toggleDrawer() {
     font-size: 17px;
   }
 
-  /* 账户名称过长时截断，保证菜单按钮始终可见。 */
+  /* 账户操作靠右并缩短用户名与退出按钮的间距。 */
+  .account-menu {
+    gap: 4px;
+    margin-left: auto;
+  }
+
+  /* 账户名称过长时截断，保证退出按钮始终可见。 */
   .account-name {
     display: inline-block;
     max-width: 72px;
@@ -193,8 +214,8 @@ function toggleDrawer() {
     padding: 0 10px;
   }
 
-  /* 隐藏账户文字但保留可访问的账户按钮。 */
-  .account-name {
+  /* 极窄手机隐藏品牌文字，为用户名和退出按钮腾出空间。 */
+  .brand span {
     display: none;
   }
 }

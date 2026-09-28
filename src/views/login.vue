@@ -2,7 +2,7 @@
   <div class="login-page">
     <header class="login-header">
       <div class="brand">
-        <img class="brand-mark" src="@/assets/logo/login-brand.png" alt="" />
+        <img class="brand-mark" src="@/assets/logo/logo.png" alt="" />
         <span class="brand-name">ruoyi-fast后台管理系统</span>
       </div>
       <span class="header-note">安全登录</span>

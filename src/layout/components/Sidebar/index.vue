@@ -2,7 +2,7 @@
   <div class="drawer-panel">
     <div class="drawer-heading">
       <router-link class="drawer-brand" to="/index" @click="closeDrawer">
-        <img src="@/assets/logo/logo.png" alt="" width="28" height="28" />
+        <img src="@/assets/logo/login-brand.png" alt="" width="28" height="28" />
         <span>ruoyi-fast</span>
       </router-link>
       <button class="drawer-close" type="button" aria-label="关闭导航菜单" @click="closeDrawer">
