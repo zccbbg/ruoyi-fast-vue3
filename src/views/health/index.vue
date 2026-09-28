@@ -44,7 +44,8 @@
             <article v-for="(item, index) in messages" :key="index" class="message"
               :class="item.role === 'user' ? 'message-user' : 'message-answer'">
               <span class="message-role">{{ item.role === 'user' ? '你' : '健康资料助手' }}</span>
-              <p>{{ item.content }}</p>
+              <p v-if="item.role === 'user'">{{ item.content }}</p>
+              <div v-else class="message-markdown" v-html="markdown.render(item.content || '')" />
               <div v-if="item.sources?.length" class="sources">
                 <button v-for="path in item.sources" :key="path" type="button" @click="openSource(path)">
                   <el-icon><Document /></el-icon><span>{{ path }}</span>
@@ -143,10 +144,12 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { Plus, Promotion, Document, ArrowRight, Delete, View } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import * as echarts from 'echarts'
+import MarkdownIt from 'markdown-it'
 import { listMembers, askHealth, getSource, listConversations, getConversation,
   listTrends, uploadReport, listDrafts, getDraftOriginal, confirmReport, listModels } from '@/api/health'
 
 const tabs = [{ value: 'ask', label: '提问' }, { value: 'reports', label: '报告' }, { value: 'trends', label: '趋势' }]
+const markdown = new MarkdownIt({ html: false, linkify: true, breaks: true })
 const tab = ref('ask')
 const members = ref([])
 const member = ref('')
@@ -402,8 +405,24 @@ onBeforeUnmount(() => { window.removeEventListener('resize', resizeChart); chart
 .message-answer { padding-left: 18px; border-left: 3px solid #178b82; }
 /* 角色标签采用小号字体。 */
 .message-role { color: #59716b; font-size: 12px; font-weight: 700; }
-/* 回答保留原始换行与长词换行。 */
-.message p { margin: 8px 0; line-height: 1.75; white-space: pre-wrap; overflow-wrap: anywhere; }
+/* 用户提问保留原始换行与长词换行。 */
+.message-user > p { margin: 8px 0; line-height: 1.75; white-space: pre-wrap; overflow-wrap: anywhere; }
+/* 助手回答中的 Markdown 内容保持稳定行高与换行。 */
+.message-markdown { margin-top: 8px; line-height: 1.75; overflow-wrap: anywhere; }
+/* Markdown 段落留出清晰但紧凑的间距。 */
+.message-markdown :deep(p) { margin: 0 0 10px; }
+/* Markdown 标题与正文形成适度层级。 */
+.message-markdown :deep(h1), .message-markdown :deep(h2), .message-markdown :deep(h3) { margin: 18px 0 8px; font-size: 1.08em; line-height: 1.45; }
+/* Markdown 列表缩进并与相邻段落分开。 */
+.message-markdown :deep(ul), .message-markdown :deep(ol) { margin: 0 0 10px; padding-left: 1.6em; }
+/* Markdown 引用用左侧线条标识。 */
+.message-markdown :deep(blockquote) { margin: 0 0 10px; padding-left: 12px; border-left: 3px solid #d2e3df; color: #52645e; }
+/* Markdown 代码块在窄屏内自行滚动。 */
+.message-markdown :deep(pre) { max-width: 100%; overflow-x: auto; padding: 10px 12px; border-radius: 4px; background: #f1f5f3; white-space: pre; }
+/* Markdown 表格在内容较宽时保留横向滚动。 */
+.message-markdown :deep(table) { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; }
+/* Markdown 表格单元格用细线区分。 */
+.message-markdown :deep(th), .message-markdown :deep(td) { padding: 5px 8px; border: 1px solid #d9e2df; text-align: left; }
 /* 来源链接可换行展示。 */
 .sources { display: flex; flex-wrap: wrap; gap: 8px; }
 /* 来源按钮保留清晰点击目标。 */
