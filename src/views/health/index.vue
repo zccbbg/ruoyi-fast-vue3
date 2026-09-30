@@ -22,7 +22,7 @@
         <div class="heading-actions">
           <el-select v-model="modelId" class="model-select" placeholder="选择问答模型">
             <el-option v-for="item in chatModels" :key="item.id"
-              :label="`${item.name} · ${item.provider === 'DEEPSEEK' ? 'DeepSeek' : 'OpenAI'}`" :value="item.id" />
+              :label="`${item.name} · ${providerNames[item.provider] || item.provider}`" :value="item.id" />
           </el-select>
           <el-button :icon="Plus" circle title="新对话" aria-label="新对话" @click="newConversation" />
         </div>
@@ -149,6 +149,7 @@ import { listMembers, askHealth, getSource, listConversations, getConversation,
   listTrends, uploadReport, listDrafts, getDraftOriginal, confirmReport, listModels } from '@/api/health'
 
 const tabs = [{ value: 'ask', label: '提问' }, { value: 'reports', label: '报告' }, { value: 'trends', label: '趋势' }]
+const providerNames = { DEEPSEEK: 'DeepSeek', OPENAI: 'OpenAI', QWEN: '千问' }
 const markdown = new MarkdownIt({ html: false, linkify: true, breaks: true })
 const tab = ref('ask')
 const members = ref([])

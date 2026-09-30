@@ -10,7 +10,7 @@
       <div v-for="item in models.filter(model => model.purpose === section.value)" :key="item.id" class="model-row">
         <div class="model-identity">
           <strong>{{ item.name }}</strong>
-          <span>{{ item.provider === 'DEEPSEEK' ? 'DeepSeek' : 'OpenAI' }} · {{ item.modelId }}</span>
+          <span>{{ providerNames[item.provider] || item.provider }} · {{ item.modelId }}</span>
         </div>
         <div class="model-actions">
           <el-tag v-if="item.isDefault" type="success" effect="plain">默认</el-tag>
@@ -26,6 +26,7 @@
         </el-radio-group></el-form-item>
         <el-form-item label="服务商"><el-select v-model="form.provider">
           <el-option label="DeepSeek" value="DEEPSEEK" /><el-option label="OpenAI" value="OPENAI" />
+          <el-option label="千问" value="QWEN" />
         </el-select></el-form-item>
         <el-form-item label="显示名称"><el-input v-model="form.name" maxlength="80" placeholder="例如：日常问答" /></el-form-item>
         <el-form-item label="模型编号"><el-input v-model="form.modelId" maxlength="100" placeholder="填写服务商提供的模型 ID" /></el-form-item>
@@ -44,6 +45,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { listModels, addModel, setDefaultModel, removeModel } from '@/api/health'
 
 const sections = [{ value: 'CHAT', label: '资料问答' }, { value: 'REPORT', label: '报告识别' }]
+const providerNames = { DEEPSEEK: 'DeepSeek', OPENAI: 'OpenAI', QWEN: '千问' }
 const models = ref([])
 const visible = ref(false)
 const saving = ref(false)
