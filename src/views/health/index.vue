@@ -24,7 +24,7 @@
             <el-option v-for="item in chatModels" :key="item.id"
               :label="`${item.name} · ${providerNames[item.provider] || item.provider}`" :value="item.id" />
           </el-select>
-          <el-button :icon="Plus" circle title="新对话" aria-label="新对话" @click="newConversation" />
+          <el-button :icon="Plus" circle title="新对话" aria-label="新对话" :disabled="asking" @click="newConversation" />
         </div>
       </div>
       <el-alert v-if="!chatModels.length" type="warning" :closable="false" class="config-alert">
@@ -32,14 +32,14 @@
       </el-alert>
       <div class="conversation-layout">
         <aside class="conversation-list" aria-label="最近对话">
-          <button type="button" :class="{ selected: !conversationId }" @click="newConversation">新对话</button>
+          <button type="button" :disabled="asking" :class="{ selected: !conversationId }" @click="newConversation">新对话</button>
           <button v-for="item in conversations" :key="item.id" type="button"
-            :class="{ selected: conversationId === item.id }" @click="openConversation(item.id)">
+            :disabled="asking" :class="{ selected: conversationId === item.id }" @click="openConversation(item.id)">
             {{ item.title }}
           </button>
         </aside>
         <div class="chat-column">
-          <div class="messages" aria-live="polite">
+          <div ref="messagesEl" class="messages" aria-live="polite">
             <el-empty v-if="!messages.length" description="暂无对话" :image-size="88" />
             <article v-for="(item, index) in messages" :key="index" class="message"
               :class="item.role === 'user' ? 'message-user' : 'message-answer'">
@@ -161,6 +161,7 @@ const asking = ref(false)
 const conversationId = ref('')
 const conversations = ref([])
 const messages = ref([])
+const messagesEl = ref(null)
 const sourceVisible = ref(false)
 const sourcePath = ref('')
 const sourceText = ref('')
@@ -217,12 +218,14 @@ function selectTab(value) {
 
 // 用途：新建空白对话；参数：无；返回值：无。
 function newConversation() {
+  if (asking.value) return
   conversationId.value = ''
   messages.value = []
 }
 
 // 用途：打开历史对话；参数：会话编号；返回值：无。
 async function openConversation(id) {
+  if (asking.value) return
   const result = await getConversation(member.value, id)
   conversationId.value = id
   messages.value = (result.data || []).map(item => ({ ...item,
@@ -234,15 +237,31 @@ async function submitQuestion() {
   if (!member.value || !modelId.value || !question.value.trim() || asking.value) return
   const text = question.value.trim()
   asking.value = true
+  const start = messages.value.length
+  messages.value.push({ role: 'user', content: text, sources: [] },
+    { role: 'assistant', content: '', sources: [] })
+  await nextTick()
+  if (messagesEl.value) messagesEl.value.scrollTop = messagesEl.value.scrollHeight
+  let completed = false
   try {
     const result = await askHealth({ member: member.value, text, modelId: modelId.value,
-      conversationId: conversationId.value || null })
-    conversationId.value = result.data.conversationId
-    messages.value.push({ role: 'user', content: text, sources: [] },
-      { role: 'assistant', content: result.data.text, sources: result.data.sources })
+      conversationId: conversationId.value || null }, chunk => {
+      const box = messagesEl.value
+      const follow = box && box.scrollHeight - box.scrollTop - box.clientHeight < 80
+      messages.value[start + 1].content += chunk
+      if (follow) nextTick(() => { box.scrollTop = box.scrollHeight })
+    })
+    completed = true
+    conversationId.value = result.conversationId
+    messages.value[start + 1].sources = result.sources
     question.value = ''
     const history = await listConversations(member.value)
     conversations.value = history.data || []
+  } catch (error) {
+    if (!completed) {
+      messages.value.splice(start, 2)
+      ElMessage.error(error.message || '问答失败，请重试')
+    }
   } finally {
     asking.value = false
   }

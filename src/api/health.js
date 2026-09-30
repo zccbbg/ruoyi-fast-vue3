@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import { getToken } from '@/utils/auth'
 
 // 用途：读取家人目录；参数：无；返回值：目录响应。
 export function listMembers() {
@@ -10,9 +11,44 @@ export function getSource(member, path) {
   return request({ url: '/health/source', method: 'get', params: { member, path } })
 }
 
-// 用途：提交文字问题；参数：问答数据；返回值：回答与引用来源。
-export function askHealth(data) {
-  return request({ url: '/health/ask', method: 'post', data, timeout: 120000 })
+// 用途：提交文字问题并逐段读取回答；参数：问答数据和事件回调；返回值：完成事件中的会话编号与引用来源。
+export async function askHealth(data, onEvent) {
+  const response = await fetch(`${import.meta.env.VITE_APP_BASE_API}/health/ask`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream',
+      ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}) },
+    body: JSON.stringify(data)
+  })
+  if (!response.ok || !response.headers.get('content-type')?.includes('text/event-stream')) {
+    const result = await response.json().catch(() => null)
+    if (result?.code && result.code !== 200) throw new Error(result.msg || '问答请求失败')
+    if (result?.code === 200) throw new Error('后端仍返回普通问答结果，请更新并重启后端服务')
+    throw new Error(response.ok ? '后端没有返回流式响应，请检查接口或代理配置' : `问答请求失败（${response.status}）`)
+  }
+  if (!response.body) throw new Error('浏览器无法读取流式回答')
+  const reader = response.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  try {
+    while (true) {
+      const { value, done } = await reader.read()
+      if (done) break
+      buffer += decoder.decode(value, { stream: true })
+      let boundary
+      while ((boundary = buffer.indexOf('\n\n')) !== -1) {
+        const frame = buffer.slice(0, boundary)
+        buffer = buffer.slice(boundary + 2)
+        if (!frame.startsWith('data:')) continue
+        const event = JSON.parse(frame.slice(5))
+        if (event.type === 'error') throw new Error(event.message)
+        if (event.type === 'chunk') onEvent(event.text)
+        if (event.type === 'done') return event
+      }
+    }
+    throw new Error('回答流意外中断，请重试')
+  } finally {
+    reader.releaseLock()
+  }
 }
 
 // 用途：读取聊天会话；参数：成员名称；返回值：会话列表。
