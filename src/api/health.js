@@ -11,7 +11,7 @@ export function getSource(member, path) {
   return request({ url: '/health/source', method: 'get', params: { member, path } })
 }
 
-// 用途：提交文字问题并逐段读取回答；参数：问答数据和事件回调；返回值：完成事件中的会话编号与引用来源。
+// 用途：提交文字问题并读取流式回答，兼容普通 JSON 回答；参数：问答数据和事件回调；返回值：会话编号与引用来源。
 export async function askHealth(data, onEvent) {
   const response = await fetch(`${import.meta.env.VITE_APP_BASE_API}/health/ask`, {
     method: 'POST',
@@ -19,13 +19,17 @@ export async function askHealth(data, onEvent) {
       ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}) },
     body: JSON.stringify(data)
   })
-  if (!response.ok || !response.headers.get('content-type')?.includes('text/event-stream')) {
+  const contentType = response.headers.get('content-type') || ''
+  if (!response.ok || contentType.includes('application/json')) {
     const result = await response.json().catch(() => null)
-    if (result?.code && result.code !== 200) throw new Error(result.msg || '问答请求失败')
-    if (result?.code === 200) throw new Error('后端仍返回普通问答结果，请更新并重启后端服务')
-    throw new Error(response.ok ? '后端没有返回流式响应，请检查接口或代理配置' : `问答请求失败（${response.status}）`)
+    if (response.ok && result?.code === 200 && result.data?.conversationId
+      && typeof result.data.text === 'string') {
+      onEvent(result.data.text)
+      return { conversationId: result.data.conversationId, sources: result.data.sources || [] }
+    }
+    throw new Error(result?.msg || '问答暂时无法完成，请重试')
   }
-  if (!response.body) throw new Error('浏览器无法读取流式回答')
+  if (!response.body) throw new Error('问答暂时无法完成，请重试')
   const reader = response.body.getReader()
   const decoder = new TextDecoder()
   let buffer = ''
@@ -45,7 +49,7 @@ export async function askHealth(data, onEvent) {
         if (event.type === 'done') return event
       }
     }
-    throw new Error('回答流意外中断，请重试')
+    throw new Error('回答中断，请重试')
   } finally {
     reader.releaseLock()
   }
