@@ -24,6 +24,7 @@
             <el-option v-for="item in chatModels" :key="item.id"
               :label="`${item.name} · ${providerNames[item.provider] || item.provider}`" :value="item.id" />
           </el-select>
+          <el-button :disabled="!member || asking" @click="openMemories">记忆管理</el-button>
           <el-button :icon="Plus" circle title="新对话" aria-label="新对话" :disabled="asking" @click="newConversation" />
         </div>
       </div>
@@ -110,6 +111,21 @@
       <pre class="source-text">{{ sourceText }}</pre>
     </el-dialog>
 
+    <el-dialog v-model="memoryVisible" title="跨会话记忆" width="min(760px, 94vw)">
+      <p class="memory-note">自动提取的健康描述仅作聊天自述，未经核实；回答仍以档案原文为依据。</p>
+      <el-empty v-if="!memoryItems.length" description="暂无记忆" :image-size="72" />
+      <div v-else class="memory-list">
+        <div v-for="item in memoryItems" :key="item.id" class="memory-row">
+          <span class="memory-meta">{{ item.kind === 'PREFERENCE' ? '偏好' : '聊天自述 · 未核实' }}</span>
+          <el-input v-model="item.content" type="textarea" :rows="2" :maxlength="500" show-word-limit />
+          <div class="memory-actions">
+            <el-button type="primary" :loading="memoryBusy" @click="saveMemory(item)">保存</el-button>
+            <el-button type="danger" plain :disabled="memoryBusy" @click="removeMemory(item)">删除</el-button>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
+
     <el-dialog v-model="draftVisible" title="核对报告草稿" width="min(850px, 96vw)" class="draft-dialog">
       <div v-if="draft" class="draft-editor">
         <p class="draft-note">请对照原始报告核对文字与指标。确认后会更新健康档案。</p>
@@ -146,7 +162,8 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import * as echarts from 'echarts'
 import MarkdownIt from 'markdown-it'
 import { listMembers, askHealth, getSource, listConversations, getConversation,
-  listTrends, uploadReport, listDrafts, getDraftOriginal, confirmReport, listModels } from '@/api/health'
+  listMemories, updateMemory, deleteMemory, listTrends, uploadReport, listDrafts,
+  getDraftOriginal, confirmReport, listModels } from '@/api/health'
 
 const tabs = [{ value: 'ask', label: '提问' }, { value: 'reports', label: '报告' }, { value: 'trends', label: '趋势' }]
 const providerNames = { DEEPSEEK: 'DeepSeek', OPENAI: 'OpenAI', QWEN: '千问' }
@@ -161,6 +178,9 @@ const asking = ref(false)
 const conversationId = ref('')
 const conversations = ref([])
 const messages = ref([])
+const memoryVisible = ref(false)
+const memoryItems = ref([])
+const memoryBusy = ref(false)
 const messagesEl = ref(null)
 const sourceVisible = ref(false)
 const sourcePath = ref('')
@@ -201,6 +221,8 @@ async function initialize() {
 // 用途：切换成员并刷新当前资料；参数：无；返回值：无。
 async function memberChanged() {
   newConversation()
+  memoryVisible.value = false
+  memoryItems.value = []
   const [history, pending, data] = await Promise.all([
     listConversations(member.value), listDrafts(member.value), listTrends(member.value)
   ])
@@ -230,6 +252,46 @@ async function openConversation(id) {
   conversationId.value = id
   messages.value = (result.data || []).map(item => ({ ...item,
     sources: item.sources ? JSON.parse(item.sources) : [] }))
+}
+
+// 用途：打开当前账号在所选成员下的记忆管理；参数：无；返回值：无。
+async function openMemories() {
+  memoryItems.value = []
+  memoryVisible.value = true
+  try {
+    const result = await listMemories(member.value)
+    memoryItems.value = result.data || []
+  } catch (error) {
+    ElMessage.error(error.message || '读取记忆失败')
+  }
+}
+
+// 用途：保存用户对自动记忆的修改；参数：记忆项；返回值：无。
+async function saveMemory(item) {
+  memoryBusy.value = true
+  try {
+    await updateMemory(member.value, item.id, item.content)
+    ElMessage.success('已保存')
+  } catch (error) {
+    ElMessage.error(error.message || '保存记忆失败')
+  } finally {
+    memoryBusy.value = false
+  }
+}
+
+// 用途：确认并删除当前账号的一条记忆；参数：记忆项；返回值：无。
+async function removeMemory(item) {
+  try {
+    await ElMessageBox.confirm('将删除这条跨会话记忆；原聊天记录仍保留。确定删除吗？', '删除记忆', { type: 'warning' })
+    memoryBusy.value = true
+    await deleteMemory(member.value, item.id)
+    memoryItems.value = memoryItems.value.filter(entry => entry.id !== item.id)
+    ElMessage.success('已删除')
+  } catch (error) {
+    if (error !== 'cancel' && error !== 'close') ElMessage.error(error.message || '删除记忆失败')
+  } finally {
+    memoryBusy.value = false
+  }
 }
 
 // 用途：提交资料问题并显示回答；参数：无；返回值：无。
@@ -401,8 +463,8 @@ onBeforeUnmount(() => { window.removeEventListener('resize', resizeChart); chart
 .section-count { color: #65746f; font-size: 13px; }
 /* 模型缺失时的操作提示与工作区留出间距。 */
 .config-alert { margin-bottom: 16px; }
-/* 模型和新对话按钮放在同一操作带。 */
-.heading-actions { display: flex; align-items: center; gap: 10px; }
+/* 模型、记忆管理和新对话按钮在窄屏时允许换行。 */
+.heading-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; }
 /* 模型菜单有稳定宽度。 */
 .model-select { width: min(230px, 40vw); }
 /* 对话区域在桌面分成历史和正文。 */
@@ -483,6 +545,16 @@ onBeforeUnmount(() => { window.removeEventListener('resize', resizeChart); chart
 .observation-row span { color: #6c7a75; overflow-wrap: anywhere; }
 /* 原文保留格式并在弹窗内滚动。 */
 .source-text { max-height: 65vh; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.6; }
+/* 记忆提示说明聊天自述的证据边界。 */
+.memory-note { margin: 0 0 16px; color: #725b38; font-size: 13px; line-height: 1.6; }
+/* 记忆列表限制弹窗高度并允许滚动。 */
+.memory-list { max-height: 65vh; overflow-y: auto; }
+/* 单条记忆按编辑顺序排列并与相邻项分隔。 */
+.memory-row { display: flex; flex-direction: column; gap: 8px; padding: 14px 0; border-top: 1px solid #e2e8e5; }
+/* 记忆类型使用轻量标签文字。 */
+.memory-meta { color: #59716b; font-size: 12px; }
+/* 编辑操作靠右排列并保持按钮间距。 */
+.memory-actions { display: flex; justify-content: flex-end; gap: 8px; }
 /* 草稿字段按阅读顺序纵向排列。 */
 .draft-editor { display: flex; flex-direction: column; gap: 18px; max-height: 65vh; overflow-y: auto; padding-right: 8px; }
 /* 核对提示与字段保持同一文字体系。 */

@@ -11,22 +11,17 @@ export function getSource(member, path) {
   return request({ url: '/health/source', method: 'get', params: { member, path } })
 }
 
-// 用途：提交文字问题并读取流式回答，兼容普通 JSON 回答；参数：问答数据和事件回调；返回值：会话编号与引用来源。
+// 用途：提交文字问题并逐段读取流式回答；参数：问答数据和事件回调；返回值：会话编号与引用来源。
 export async function askHealth(data, onEvent) {
-  const response = await fetch(`${import.meta.env.VITE_APP_BASE_API}/health/ask`, {
+  const response = await fetch(`${import.meta.env.VITE_APP_BASE_API}/health/ask/stream`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream',
       ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}) },
     body: JSON.stringify(data)
   })
   const contentType = response.headers.get('content-type') || ''
-  if (!response.ok || contentType.includes('application/json')) {
+  if (!response.ok || !contentType.includes('text/event-stream')) {
     const result = await response.json().catch(() => null)
-    if (response.ok && result?.code === 200 && result.data?.conversationId
-      && typeof result.data.text === 'string') {
-      onEvent(result.data.text)
-      return { conversationId: result.data.conversationId, sources: result.data.sources || [] }
-    }
     throw new Error(result?.msg || '问答暂时无法完成，请重试')
   }
   if (!response.body) throw new Error('问答暂时无法完成，请重试')
@@ -63,6 +58,21 @@ export function listConversations(member) {
 // 用途：读取会话消息；参数：成员名称和会话编号；返回值：消息列表。
 export function getConversation(member, id) {
   return request({ url: `/health/conversations/${id}`, method: 'get', params: { member } })
+}
+
+// 用途：读取当前账号对指定成员的跨会话记忆；参数：成员名称；返回值：记忆列表响应。
+export function listMemories(member) {
+  return request({ url: '/health/memories', method: 'get', params: { member } })
+}
+
+// 用途：修改当前账号的一条记忆；参数：成员名称、记忆编号和新内容；返回值：操作响应。
+export function updateMemory(member, id, content) {
+  return request({ url: `/health/memories/${id}`, method: 'put', data: { member, content } })
+}
+
+// 用途：删除当前账号的一条记忆；参数：成员名称和记忆编号；返回值：操作响应。
+export function deleteMemory(member, id) {
+  return request({ url: `/health/memories/${id}`, method: 'delete', params: { member } })
 }
 
 // 用途：读取结构化指标；参数：成员名称；返回值：指标列表。
