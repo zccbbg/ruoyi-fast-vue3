@@ -107,6 +107,16 @@ export function listModels() {
   return request({ url: '/health/models', method: 'get' })
 }
 
+// 用途：读取数据库中的问答系统提示词；参数：无；返回值：提示词响应。
+export function getHealthPrompt() {
+  return request({ url: '/health/prompt', method: 'get' })
+}
+
+// 用途：保存问答系统提示词；参数：提示词内容；返回值：操作响应。
+export function saveHealthPrompt(content) {
+  return request({ url: '/health/prompt', method: 'put', data: { content } })
+}
+
 // 用途：添加模型配置；参数：配置表单；返回值：模型编号。
 export function addModel(data) {
   return request({ url: '/health/models', method: 'post', data })

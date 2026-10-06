@@ -19,6 +19,12 @@
         </div>
       </div>
     </section>
+    <section class="model-section">
+      <div class="section-heading"><h2>问答系统提示词</h2></div>
+      <p class="prompt-hint">保存后，新发起的问答会使用这里的内容。</p>
+      <el-input v-model="systemPrompt" type="textarea" :rows="8" maxlength="10000" show-word-limit placeholder="填写问答系统提示词" />
+      <div class="prompt-actions"><el-button v-hasPermi="['system:config:edit']" type="primary" :loading="promptSaving" @click="savePrompt">保存提示词</el-button></div>
+    </section>
     <el-dialog v-model="visible" title="添加模型" width="min(520px, 94vw)">
       <el-form :model="form" label-position="top">
         <el-form-item label="用途"><el-radio-group v-model="form.purpose">
@@ -42,19 +48,42 @@
 import { onMounted, reactive, ref } from 'vue'
 import { Plus, Delete } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { listModels, addModel, setDefaultModel, removeModel } from '@/api/health'
+import { listModels, addModel, setDefaultModel, removeModel, getHealthPrompt, saveHealthPrompt } from '@/api/health'
 
 const sections = [{ value: 'CHAT', label: '资料问答' }, { value: 'REPORT', label: '报告识别' }]
 const providerNames = { DEEPSEEK: 'DeepSeek', OPENAI: 'OpenAI', QWEN: '千问' }
 const models = ref([])
 const visible = ref(false)
 const saving = ref(false)
+const systemPrompt = ref('')
+const promptSaving = ref(false)
 const form = reactive({ name: '', provider: 'DEEPSEEK', purpose: 'CHAT', modelId: '', apiKey: '', makeDefault: true })
 
 // 用途：读取不含密钥的模型列表；参数：无；返回值：无。
 async function refresh() {
   const result = await listModels()
   models.value = result.data || []
+}
+
+// 用途：读取数据库中的问答系统提示词并填入编辑框；参数：无；返回值：无。
+async function loadPrompt() {
+  const prompt = await getHealthPrompt()
+  systemPrompt.value = prompt.data || ''
+}
+
+// 用途：将编辑后的问答系统提示词保存到数据库；参数：无；返回值：无。
+async function savePrompt() {
+  if (!systemPrompt.value.trim()) {
+    ElMessage.warning('系统提示词不能为空')
+    return
+  }
+  promptSaving.value = true
+  try {
+    await saveHealthPrompt(systemPrompt.value)
+    ElMessage.success('系统提示词已保存')
+  } finally {
+    promptSaving.value = false
+  }
 }
 
 // 用途：清空模型表单并打开弹窗；参数：无；返回值：无。
@@ -97,6 +126,7 @@ async function deleteItem(item) {
 }
 
 onMounted(refresh)
+onMounted(loadPrompt)
 </script>
 
 <style scoped>
@@ -124,6 +154,10 @@ onMounted(refresh)
 .model-identity span { color: #6b7974; font-size: 13px; overflow-wrap: anywhere; }
 /* 状态和删除命令保持稳定间距。 */
 .model-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 10px; }
+/* 提示文字使用次级色并与输入框留出间距。 */
+.prompt-hint { margin: 14px 0 12px; color: #697a74; font-size: 13px; }
+/* 保存按钮靠右排列。 */
+.prompt-actions { display: flex; justify-content: flex-end; margin-top: 14px; }
 /* 手机端缩小页面留白和标题。 */
 @media (max-width: 760px) {
   /* 页面外边距适合手机。 */
