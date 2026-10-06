@@ -55,7 +55,7 @@
             </article>
           </div>
           <form class="ask-form" @submit.prevent="submitQuestion">
-            <el-input v-model="question" type="textarea" :rows="2" resize="none"
+            <el-input v-model="question" type="textarea" :rows="2" resize="none" @keydown.enter="handleQuestionEnter"
               placeholder="输入想了解的健康资料问题" :maxlength="2000" />
             <el-button type="primary" :icon="Promotion" native-type="submit" :loading="asking"
               :disabled="!member || !question.trim() || !chatModels.length">提问</el-button>
@@ -292,6 +292,13 @@ async function removeMemory(item) {
   } finally {
     memoryBusy.value = false
   }
+}
+
+// 用途：按回车提交问题，保留 Shift+回车换行和输入法选字；参数：键盘事件；返回值：无。
+function handleQuestionEnter(event) {
+  if (event.shiftKey || event.isComposing || event.keyCode === 229) return
+  event.preventDefault()
+  submitQuestion()
 }
 
 // 用途：提交资料问题并显示回答；参数：无；返回值：无。
