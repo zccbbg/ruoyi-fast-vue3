@@ -11,13 +11,14 @@ export function getSource(member, path) {
   return request({ url: '/health/source', method: 'get', params: { member, path } })
 }
 
-// 用途：提交文字问题并逐段读取流式回答；参数：问答数据和事件回调；返回值：会话编号与引用来源。
-export async function askHealth(data, onEvent) {
+// 用途：提交文字问题并逐段读取流式回答；参数：问答数据、事件回调和取消信号；返回值：会话编号与引用来源。
+export async function askHealth(data, onEvent, signal) {
   const response = await fetch(`${import.meta.env.VITE_APP_BASE_API}/health/ask/stream`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream',
       ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}) },
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
+    signal
   })
   const contentType = response.headers.get('content-type') || ''
   if (!response.ok || !contentType.includes('text/event-stream')) {
@@ -48,6 +49,11 @@ export async function askHealth(data, onEvent) {
   } finally {
     reader.releaseLock()
   }
+}
+
+// 用途：通知服务端停止指定的问答生成；参数：本轮请求编号；返回值：停止操作响应。
+export function stopHealth(requestId) {
+  return request({ url: `/health/ask/${requestId}`, method: 'delete' })
 }
 
 // 用途：读取聊天会话；参数：成员名称；返回值：会话列表。

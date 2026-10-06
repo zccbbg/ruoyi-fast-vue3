@@ -57,8 +57,9 @@
           <form class="ask-form" @submit.prevent="submitQuestion">
             <el-input v-model="question" type="textarea" :rows="2" resize="none" @keydown.enter="handleQuestionEnter"
               placeholder="输入想了解的健康资料问题" :maxlength="2000" />
-            <el-button type="primary" :icon="Promotion" native-type="submit" :loading="asking"
-              :disabled="!member || !question.trim() || !chatModels.length">提问</el-button>
+            <el-button v-if="generating" type="danger" plain native-type="button" @click="stopQuestion">停止生成</el-button>
+            <el-button v-else type="primary" :icon="Promotion" native-type="submit"
+              :disabled="asking || !member || !question.trim() || !chatModels.length">提问</el-button>
           </form>
         </div>
       </div>
@@ -161,7 +162,7 @@ import { Plus, Promotion, Document, ArrowRight, Delete, View } from '@element-pl
 import { ElMessage, ElMessageBox } from 'element-plus'
 import * as echarts from 'echarts'
 import MarkdownIt from 'markdown-it'
-import { listMembers, askHealth, getSource, listConversations, getConversation,
+import { listMembers, askHealth, stopHealth, getSource, listConversations, getConversation,
   listMemories, updateMemory, deleteMemory, listTrends, uploadReport, listDrafts,
   getDraftOriginal, confirmReport, listModels } from '@/api/health'
 
@@ -175,6 +176,10 @@ const models = ref([])
 const modelId = ref('')
 const question = ref('')
 const asking = ref(false)
+const generating = ref(false)
+let askController = null
+let activeRequestId = ''
+let activeStart = -1
 const conversationId = ref('')
 const conversations = ref([])
 const messages = ref([])
@@ -305,8 +310,14 @@ function handleQuestionEnter(event) {
 async function submitQuestion() {
   if (!member.value || !modelId.value || !question.value.trim() || asking.value) return
   const text = question.value.trim()
+  const controller = new AbortController()
+  const requestId = crypto.randomUUID()
+  askController = controller
+  activeRequestId = requestId
   asking.value = true
+  generating.value = true
   const start = messages.value.length
+  activeStart = start
   messages.value.push({ role: 'user', content: text, sources: [] },
     { role: 'assistant', content: '', sources: [] })
   await nextTick()
@@ -314,26 +325,47 @@ async function submitQuestion() {
   let completed = false
   try {
     const result = await askHealth({ member: member.value, text, modelId: modelId.value,
-      conversationId: conversationId.value || null }, chunk => {
+      conversationId: conversationId.value || null, requestId }, chunk => {
+      if (controller.signal.aborted) return
       const box = messagesEl.value
       const follow = box && box.scrollHeight - box.scrollTop - box.clientHeight < 80
       messages.value[start + 1].content += chunk
       if (follow) nextTick(() => { box.scrollTop = box.scrollHeight })
-    })
+    }, controller.signal)
     completed = true
+    generating.value = false
     conversationId.value = result.conversationId
     messages.value[start + 1].sources = result.sources
     question.value = ''
     const history = await listConversations(member.value)
     conversations.value = history.data || []
   } catch (error) {
-    if (!completed) {
+    if (!completed && !controller.signal.aborted) {
       messages.value.splice(start, 2)
       ElMessage.error(error.message || '问答失败，请重试')
     }
   } finally {
+    askController = null
+    activeRequestId = ''
+    activeStart = -1
+    generating.value = false
     asking.value = false
   }
+}
+
+// 用途：停止当前问答并通知服务端取消模型流；参数：无；返回值：无。
+function stopQuestion() {
+  if (!generating.value || !askController) return
+  const requestId = activeRequestId
+  messages.value.splice(activeStart, 2)
+  askController.abort()
+  generating.value = false
+  stopHealth(requestId).then(async result => {
+    if (result.data !== false) return
+    ElMessage.info('回答已完成并保存，可在历史对话中查看')
+    const history = await listConversations(member.value)
+    conversations.value = history.data || []
+  }).catch(() => ElMessage.warning('服务端停止请求失败，请稍后检查会话记录'))
 }
 
 // 用途：打开回答引用的原始 Markdown；参数：相对路径；返回值：无。
