@@ -108,7 +108,7 @@
     </section>
 
     <el-dialog v-model="sourceVisible" :title="sourcePath" width="min(800px, 94vw)">
-      <pre class="source-text">{{ sourceText }}</pre>
+      <div class="message-markdown source-text" v-html="markdown.render(sourceText || '')" />
     </el-dialog>
 
     <el-dialog v-model="memoryVisible" title="跨会话记忆" width="min(760px, 94vw)">
@@ -543,8 +543,8 @@ onBeforeUnmount(() => { window.removeEventListener('resize', resizeChart); chart
 .observation-row { display: grid; grid-template-columns: 140px 160px minmax(0, 1fr); gap: 12px; padding: 12px 0; border-bottom: 1px solid #e2e8e5; font-size: 13px; }
 /* 来源使用次级文字色。 */
 .observation-row span { color: #6c7a75; overflow-wrap: anywhere; }
-/* 原文保留格式并在弹窗内滚动。 */
-.source-text { max-height: 65vh; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.6; }
+/* 来源 Markdown 在弹窗内滚动，长内容保持可读。 */
+.source-text { max-height: 65vh; overflow: auto; }
 /* 记忆提示说明聊天自述的证据边界。 */
 .memory-note { margin: 0 0 16px; color: #725b38; font-size: 13px; line-height: 1.6; }
 /* 记忆列表限制弹窗高度并允许滚动。 */
