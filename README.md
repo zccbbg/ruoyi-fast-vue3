@@ -2,6 +2,14 @@
 
 * 本仓库为前端技术栈 [Vue3](https://v3.cn.vuejs.org) + [Element Plus](https://element-plus.org/zh-CN) + [Vite](https://cn.vitejs.dev) 版本。
 
+## 一个好用的脚手架
+
+一定在细节之处做足功夫，操作极简！
+
+一定在持续不断的优化，保持克制，杜绝臃肿！
+
+一定与客户保持持续的联系，做到力所能及的理解需求！
+
 ## 后端项目地址
 #### gitee地址
 https://gitee.com/zccbbg/ruoyi-fast-service

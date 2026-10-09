@@ -6,6 +6,12 @@
         <span class="welcome-badge">工作台</span>
       </div>
       <p>欢迎使用 ruoyi-fast 管理系统。</p>
+      <div class="project-intro">
+        <h2>一个好用的脚手架</h2>
+        <p>一定在细节之处做足功夫，操作极简！</p>
+        <p>一定在持续不断的优化，保持克制，杜绝臃肿！</p>
+        <p>一定与客户保持持续的联系，做到力所能及的理解需求！</p>
+      </div>
     </section>
   </div>
 </template>
@@ -63,6 +69,28 @@ const userStore = useUserStore()
   color: #59616b;
   font-size: 18px;
   line-height: 1.55;
+}
+
+/* 项目介绍与欢迎语分开，保持卡片内容层次清晰。 */
+.project-intro {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid #e8eaed;
+}
+
+/* 项目介绍标题延续欢迎卡的简洁风格。 */
+.project-intro h2 {
+  margin: 0 0 12px;
+  font-size: 22px;
+  line-height: 1.4;
+}
+
+/* 三句介绍逐行展示，方便阅读。 */
+.project-intro p {
+  margin: 8px 0 0;
+  color: #59616b;
+  font-size: 16px;
+  line-height: 1.6;
 }
 
 /* 手机端缩小外边距与内边距。 */
