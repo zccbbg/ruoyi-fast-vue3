@@ -90,12 +90,6 @@ export const constantRoutes = [
         meta: { title: '参数设置', icon: 'edit' }
       },
       {
-        path: 'notice',
-        component: () => import('@/views/system/notice/index'),
-        name: 'Notice',
-        meta: { title: '通知公告', icon: 'message' }
-      },
-      {
         path: 'dict-data/index/:dictId(\\d+)',
         component: () => import('@/views/system/dict/data'),
         name: 'Data',
@@ -137,18 +131,6 @@ export const constantRoutes = [
         component: () => import('@/views/monitor/online/index'),
         name: 'Online',
         meta: { title: '在线用户', icon: 'online' }
-      },
-      {
-        path: 'cache/list',
-        component: () => import('@/views/monitor/cache/list'),
-        name: 'CacheList',
-        meta: { title: '缓存列表', icon: 'redis-list' }
-      },
-      {
-        path: 'cache',
-        component: () => import('@/views/monitor/cache/index'),
-        name: 'Cache',
-        meta: { title: '缓存监控', icon: 'redis' }
       }
     ]
   },
