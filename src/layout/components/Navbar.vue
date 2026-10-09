@@ -51,12 +51,10 @@ function toggleDrawer() {
 </script>
 
 <style lang="scss" scoped>
-/* 桌面顶栏划分左侧品牌、居中导航和右侧账户三个区域。 */
+/* 桌面顶栏从左到右排列品牌、导航和账户。 */
 .navbar {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) max-content minmax(0, 1fr);
+  display: flex;
   align-items: center;
-  gap: 20px;
   width: 100%;
   height: 68px;
   padding: 0 clamp(24px, 2.4vw, 48px);
@@ -68,8 +66,7 @@ function toggleDrawer() {
 .brand {
   display: inline-flex;
   align-items: center;
-  grid-column: 1;
-  justify-self: start;
+  flex: none;
   gap: 10px;
   color: #121820;
   font-size: 19px;
@@ -77,10 +74,9 @@ function toggleDrawer() {
   white-space: nowrap;
 }
 
-/* 路由菜单使用独立的中间列。 */
+/* 路由菜单紧随品牌标题排列。 */
 .desktop-nav {
-  grid-column: 2;
-  justify-self: center;
+  margin-left: 24px;
   width: max-content;
   overflow: visible;
 }
@@ -94,27 +90,37 @@ function toggleDrawer() {
   background: transparent;
 }
 
-/* 一级菜单使用截图中的浅橙色选中态。 */
+/* 一级菜单保持纯文字导航的紧凑间距。 */
 .top-menu :deep(.el-menu-item),
 .top-menu :deep(.el-sub-menu__title) {
   height: 42px;
-  margin: 0 3px;
-  padding: 0 15px;
+  margin: 0 2px;
+  padding: 0 14px;
   border: 0 !important;
-  border-radius: 10px;
+  border-radius: 6px;
   color: #626870;
   font-size: 15px;
 }
 
-/* 菜单图标与文字保持一致的间距。 */
-.top-menu :deep(.svg-icon) {
-  margin-right: 7px;
-  font-size: 18px;
+/* 下拉箭头与菜单文字留出清晰间距。 */
+.top-menu :deep(.el-sub-menu__title) {
+  padding-right: 34px;
 }
 
-/* 当前页面和悬停菜单展示品牌强调色。 */
+/* 下拉箭头贴近一级菜单文字右侧。 */
+.top-menu :deep(.el-sub-menu__icon-arrow) {
+  right: 14px;
+}
+
+/* 当前页面仅以橙色文字标识。 */
 .top-menu :deep(.is-active > .el-sub-menu__title),
-.top-menu :deep(.el-menu-item.is-active),
+.top-menu :deep(.el-menu-item.is-active) {
+  background: transparent;
+  color: #f26b21;
+}
+
+/* 鼠标悬停和展开下拉时显示浅橙色反馈。 */
+.top-menu :deep(.el-sub-menu.is-opened > .el-sub-menu__title),
 .top-menu :deep(.el-menu-item:hover),
 .top-menu :deep(.el-sub-menu__title:hover) {
   background: #fff1e8;
@@ -125,9 +131,8 @@ function toggleDrawer() {
 .account-menu {
   display: flex;
   align-items: center;
-  grid-column: 3;
-  justify-self: end;
   gap: 18px;
+  margin-left: auto;
 }
 
 /* 用户名作为常显信息展示。 */
@@ -172,7 +177,6 @@ function toggleDrawer() {
 @media (max-width: 991px) {
   /* 手机上收紧顶栏间距。 */
   .navbar {
-    display: flex;
     gap: 8px;
     padding: 0 16px;
   }

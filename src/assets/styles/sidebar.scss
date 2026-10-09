@@ -3,6 +3,40 @@
   display: none;
 }
 
+/* 顶部导航的下拉层使用与白色顶栏一致的面板样式。 */
+.top-nav-popper .el-menu--popup {
+  min-width: 176px;
+  padding: 6px;
+  border: 1px solid #ececec;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(18, 24, 32, 0.12);
+}
+
+/* 下拉菜单文字与一级菜单保持统一的行高和颜色。 */
+.top-nav-popper .el-menu-item,
+.top-nav-popper .el-sub-menu__title {
+  height: 42px;
+  margin: 2px 0;
+  padding: 0 14px;
+  border-radius: 6px;
+  color: #626870;
+  font-size: 15px;
+}
+
+/* 下拉菜单当前项仅显示橙色文字。 */
+.top-nav-popper .el-menu-item.is-active {
+  background: transparent;
+  color: #f26b21;
+}
+
+/* 下拉菜单悬停时显示浅橙色背景。 */
+.top-nav-popper .el-menu-item:hover,
+.top-nav-popper .el-sub-menu__title:hover {
+  background: #fff1e8;
+  color: #f26b21;
+}
+
 /* 手机上抽屉固定覆盖页面左侧。 */
 @media (max-width: 991px) {
   /* 抽屉宽度随手机屏幕收缩，并保留可点击的遮罩。 */
@@ -99,14 +133,14 @@
     font-size: 15px;
   }
 
-  /* 菜单图标与文字间距保持一致。 */
-  #app .drawer-menu .svg-icon {
-    margin-right: 12px;
-    font-size: 18px;
+  /* 手机抽屉的当前菜单仅显示橙色文字。 */
+  #app .drawer-menu .el-menu-item.is-active,
+  #app .drawer-menu .el-sub-menu.is-active > .el-sub-menu__title {
+    background: transparent;
+    color: #f26b21;
   }
 
-  /* 当前菜单和悬停菜单显示浅橙色强调。 */
-  #app .drawer-menu .el-menu-item.is-active,
+  /* 手机抽屉的菜单悬停时显示浅橙色反馈。 */
   #app .drawer-menu .el-menu-item:hover,
   #app .drawer-menu .el-sub-menu__title:hover {
     background: #fff1e8;
