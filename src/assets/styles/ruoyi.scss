@@ -102,11 +102,13 @@
 
 /** 表格布局 **/
 .pagination-container {
-	// position: relative;
-	height: 25px;
+	// 分页紧贴表格，并由内容撑起完整的白色背景区域
+	height: auto;
 	margin-bottom: 10px;
-	margin-top: 15px;
+	margin-top: 0;
 	padding: 10px 20px !important;
+	display: flex;
+	justify-content: flex-end;
 }
 
 /* tree border */
@@ -119,8 +121,8 @@
 }
 
 .pagination-container .el-pagination {
-	right: 0;
-	position: absolute;
+	// 页码参与容器布局，避免超出背景区域
+	position: static;
 }
 
 @media ( max-width : 768px) {
