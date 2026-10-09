@@ -90,54 +90,11 @@ export const constantRoutes = [
         meta: { title: '参数设置', icon: 'edit' }
       },
       {
-        path: 'notice',
-        component: () => import('@/views/system/notice/index'),
-        name: 'Notice',
-        meta: { title: '通知公告', icon: 'message' }
-      },
-      {
-        path: 'dict-data/index/:dictId(\\d+)',
-        component: () => import('@/views/system/dict/data'),
-        name: 'Data',
-        hidden: true,
-        meta: { title: '字典数据', activeMenu: '/system/dict' }
-      }
-    ]
-  },
-  {
-    path: '/monitor',
-    component: Layout,
-    redirect: '/monitor/online',
-    name: 'Monitor',
-    meta: { title: '系统监控', icon: 'monitor', alwaysShow: true },
-    children: [
-      {
         path: 'online',
         component: () => import('@/views/monitor/online/index'),
         name: 'Online',
         meta: { title: '在线用户', icon: 'online' }
       },
-      {
-        path: 'cache/list',
-        component: () => import('@/views/monitor/cache/list'),
-        name: 'CacheList',
-        meta: { title: '缓存列表', icon: 'redis-list' }
-      },
-      {
-        path: 'cache',
-        component: () => import('@/views/monitor/cache/index'),
-        name: 'Cache',
-        meta: { title: '缓存监控', icon: 'redis' }
-      }
-    ]
-  },
-  {
-    path: '/log',
-    component: Layout,
-    redirect: '/log/operlog',
-    name: 'Log',
-    meta: { title: '日志管理', icon: 'log', alwaysShow: true },
-    children: [
       {
         path: 'operlog',
         component: () => import('@/views/monitor/operlog/index'),
@@ -149,6 +106,13 @@ export const constantRoutes = [
         component: () => import('@/views/monitor/logininfor/index'),
         name: 'Logininfor',
         meta: { title: '登录日志', icon: 'logininfor' }
+      },
+      {
+        path: 'dict-data/index/:dictId(\\d+)',
+        component: () => import('@/views/system/dict/data'),
+        name: 'Data',
+        hidden: true,
+        meta: { title: '字典数据', activeMenu: '/system/dict' }
       }
     ]
   }
