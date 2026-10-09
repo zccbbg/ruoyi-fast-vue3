@@ -121,9 +121,13 @@ aside {
   }
 }
 
-//main-container全局样式
+/* 业务页面沿用首页的外边距与白色卡片外观。 */
 .app-container {
-  padding: 20px;
+  margin: 30px clamp(20px, 2.4vw, 48px) 48px;
+  padding: 24px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
 }
 
 .components-container {
@@ -185,8 +189,9 @@ aside {
 
 /* 手机端通用页面使用一致的紧凑留白。 */
 @media (max-width: 767px) {
-  /* 列表和表单页面避免内容紧贴屏幕边缘。 */
+  /* 手机端业务卡片沿用首页的留白，并缩小内容内边距。 */
   .app-container {
+    margin: 20px 16px 36px;
     padding: 16px;
   }
 
