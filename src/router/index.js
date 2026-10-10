@@ -90,6 +90,24 @@ export const constantRoutes = [
         meta: { title: '参数设置', icon: 'edit' }
       },
       {
+        path: 'online',
+        component: () => import('@/views/monitor/online/index'),
+        name: 'Online',
+        meta: { title: '在线用户', icon: 'online' }
+      },
+      {
+        path: 'operlog',
+        component: () => import('@/views/monitor/operlog/index'),
+        name: 'Operlog',
+        meta: { title: '操作日志', icon: 'form' }
+      },
+      {
+        path: 'logininfor',
+        component: () => import('@/views/monitor/logininfor/index'),
+        name: 'Logininfor',
+        meta: { title: '登录日志', icon: 'logininfor' }
+      },
+      {
         path: 'dict-data/index/:dictId(\\d+)',
         component: () => import('@/views/system/dict/data'),
         name: 'Data',
@@ -116,42 +134,6 @@ export const constantRoutes = [
         component: () => import('@/views/health/models.vue'),
         name: 'HealthModels',
         meta: { title: '模型配置', icon: 'edit' }
-      }
-    ]
-  },
-  {
-    path: '/monitor',
-    component: Layout,
-    redirect: '/monitor/online',
-    name: 'Monitor',
-    meta: { title: '系统监控', icon: 'monitor', alwaysShow: true },
-    children: [
-      {
-        path: 'online',
-        component: () => import('@/views/monitor/online/index'),
-        name: 'Online',
-        meta: { title: '在线用户', icon: 'online' }
-      }
-    ]
-  },
-  {
-    path: '/log',
-    component: Layout,
-    redirect: '/log/operlog',
-    name: 'Log',
-    meta: { title: '日志管理', icon: 'log', alwaysShow: true },
-    children: [
-      {
-        path: 'operlog',
-        component: () => import('@/views/monitor/operlog/index'),
-        name: 'Operlog',
-        meta: { title: '操作日志', icon: 'form' }
-      },
-      {
-        path: 'logininfor',
-        component: () => import('@/views/monitor/logininfor/index'),
-        name: 'Logininfor',
-        meta: { title: '登录日志', icon: 'logininfor' }
       }
     ]
   }
